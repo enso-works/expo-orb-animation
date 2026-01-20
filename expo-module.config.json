@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoIosOrbModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.iosorb.ExpoIosOrbModule"]
+  }
+}
