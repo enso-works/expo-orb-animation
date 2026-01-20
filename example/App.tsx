@@ -1,73 +1,50 @@
-import { useEvent } from 'expo';
-import ExpoIosOrb, { ExpoIosOrbView } from 'expo-ios-orb';
-import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView, Text, View } from 'react-native';
+
+import { ExpoIosOrbView } from 'expo-ios-orb';
 
 export default function App() {
-  const onChangePayload = useEvent(ExpoIosOrb, 'onChange');
-
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        <Group name="Constants">
-          <Text>{ExpoIosOrb.PI}</Text>
-        </Group>
-        <Group name="Functions">
-          <Text>{ExpoIosOrb.hello()}</Text>
-        </Group>
-        <Group name="Async functions">
-          <Button
-            title="Set value"
-            onPress={async () => {
-              await ExpoIosOrb.setValueAsync('Hello from JS!');
-            }}
-          />
-        </Group>
-        <Group name="Events">
-          <Text>{onChangePayload?.value}</Text>
-        </Group>
-        <Group name="Views">
-          <ExpoIosOrbView
-            url="https://www.example.com"
-            onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
-            style={styles.view}
-          />
-        </Group>
-      </ScrollView>
+      <View style={styles.card}>
+        <Text style={styles.title}>Orb</Text>
+        <ExpoIosOrbView
+          style={styles.orb}
+         backgroundColors={['#7c3aed', '#3b82f6', '#ec4899']}
+         glowColor="#ffffff"
+          particleColor="#ffffff"
+          coreGlowIntensity={1.2}
+          showBackground={true}
+          showWavyBlobs={true}
+          showParticles={true}
+          showGlowEffects={true}
+          showShadow={true}
+          speed={60}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
-function Group(props: { name: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.group}>
-      <Text style={styles.groupHeader}>{props.name}</Text>
-      {props.children}
-    </View>
-  );
-}
-
 const styles = {
-  header: {
-    fontSize: 30,
-    margin: 20,
-  },
-  groupHeader: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  group: {
-    margin: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-  },
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#0b0b0f',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  view: {
-    flex: 1,
-    height: 200,
+  card: {
+    width: '90%',
+    alignItems: 'center',
+    paddingVertical: 32,
+    borderRadius: 20,
+  },
+  title: {
+    color: '#f8fafc',
+    fontSize: 22,
+    marginBottom: 16,
+  },
+  orb: {
+    width: 220,
+    height: 220,
   },
 };

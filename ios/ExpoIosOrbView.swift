@@ -1,38 +1,92 @@
 import ExpoModulesCore
-import WebKit
+import SwiftUI
 
-// This view will be used as a native component. Make sure to inherit from `ExpoView`
-// to apply the proper styling (e.g. border radius and shadows).
-class ExpoIosOrbView: ExpoView {
-  let webView = WKWebView()
-  let onLoad = EventDispatcher()
-  var delegate: WebViewDelegate?
+private final class OrbConfigurationModel: ObservableObject {
+  @Published var configuration: OrbConfiguration
 
-  required init(appContext: AppContext? = nil) {
-    super.init(appContext: appContext)
-    clipsToBounds = true
-    delegate = WebViewDelegate { url in
-      self.onLoad(["url": url])
-    }
-    webView.navigationDelegate = delegate
-    addSubview(webView)
-  }
-
-  override func layoutSubviews() {
-    webView.frame = bounds
+  init(configuration: OrbConfiguration) {
+    self.configuration = configuration
   }
 }
 
-class WebViewDelegate: NSObject, WKNavigationDelegate {
-  let onUrlChange: (String) -> Void
+private struct OrbContainerView: View {
+  @ObservedObject var model: OrbConfigurationModel
 
-  init(onUrlChange: @escaping (String) -> Void) {
-    self.onUrlChange = onUrlChange
+  var body: some View {
+    OrbView(configuration: model.configuration)
+  }
+}
+
+struct OrbProps {
+  private static let defaultBackgroundColors: [UIColor] = [
+    .systemGreen,
+    .systemBlue,
+    .systemPink,
+  ]
+
+  var backgroundColors: [UIColor] = OrbProps.defaultBackgroundColors
+  var glowColor: UIColor = .white
+  var particleColor: UIColor = .white
+  var coreGlowIntensity: Double = 1.0
+  var showBackground: Bool = true
+  var showWavyBlobs: Bool = true
+  var showParticles: Bool = true
+  var showGlowEffects: Bool = true
+  var showShadow: Bool = true
+  var speed: Double = 60
+
+  func makeConfiguration() -> OrbConfiguration {
+    let resolvedBackgroundColors = backgroundColors.count >= 2
+      ? backgroundColors
+      : OrbProps.defaultBackgroundColors
+    let safeSpeed = max(1, speed)
+    let safeIntensity = max(0, coreGlowIntensity)
+
+    return OrbConfiguration(
+      backgroundColors: resolvedBackgroundColors.map { Color(uiColor: $0) },
+      glowColor: Color(uiColor: glowColor),
+      particleColor: Color(uiColor: particleColor),
+      coreGlowIntensity: safeIntensity,
+      showBackground: showBackground,
+      showWavyBlobs: showWavyBlobs,
+      showParticles: showParticles,
+      showGlowEffects: showGlowEffects,
+      showShadow: showShadow,
+      speed: safeSpeed
+    )
+  }
+}
+
+class ExpoIosOrbView: ExpoView {
+  private var props = OrbProps()
+  private let model: OrbConfigurationModel
+  private let hostingController: UIHostingController<OrbContainerView>
+
+  required init(appContext: AppContext? = nil) {
+    let initialConfig = OrbConfiguration()
+    let model = OrbConfigurationModel(configuration: initialConfig)
+    self.model = model
+    self.hostingController = UIHostingController(rootView: OrbContainerView(model: model))
+
+    super.init(appContext: appContext)
+
+    clipsToBounds = false
+    hostingController.view.backgroundColor = .clear
+    hostingController.view.clipsToBounds = false
+    hostingController.view.isOpaque = false
+    hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+    addSubview(hostingController.view)
+
+    NSLayoutConstraint.activate([
+      hostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+      hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
+      hostingController.view.topAnchor.constraint(equalTo: topAnchor),
+      hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+    ])
   }
 
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation) {
-    if let url = webView.url {
-      onUrlChange(url.absoluteString)
-    }
+  func updateProps(_ update: (inout OrbProps) -> Void) {
+    update(&props)
+    model.configuration = props.makeConfiguration()
   }
 }

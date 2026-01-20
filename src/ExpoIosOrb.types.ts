@@ -1,19 +1,15 @@
-import type { StyleProp, ViewStyle } from 'react-native';
-
-export type OnLoadEventPayload = {
-  url: string;
-};
-
-export type ExpoIosOrbModuleEvents = {
-  onChange: (params: ChangeEventPayload) => void;
-};
-
-export type ChangeEventPayload = {
-  value: string;
-};
+import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
 
 export type ExpoIosOrbViewProps = {
-  url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
+  backgroundColors?: ColorValue[];
+  glowColor?: ColorValue;
+  particleColor?: ColorValue;
+  coreGlowIntensity?: number;
+  showBackground?: boolean;
+  showWavyBlobs?: boolean;
+  showParticles?: boolean;
+  showGlowEffects?: boolean;
+  showShadow?: boolean;
+  speed?: number;
   style?: StyleProp<ViewStyle>;
 };
