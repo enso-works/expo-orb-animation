@@ -11,16 +11,18 @@ public struct OrbConfiguration {
     public let glowColor: Color
     public let backgroundColors: [Color]
     public let particleColor: Color
-    
+
     public let showBackground: Bool
     public let showWavyBlobs: Bool
     public let showParticles: Bool
     public let showGlowEffects: Bool
     public let showShadow: Bool
-    
+
     public let coreGlowIntensity: Double
     public let speed: Double
-    
+    public let breathingIntensity: Double
+    public let breathingSpeed: Double
+
     public init(
         backgroundColors: [Color] = [.green, .blue, .pink],
         glowColor: Color = .white,
@@ -31,7 +33,9 @@ public struct OrbConfiguration {
         showParticles: Bool = true,
         showGlowEffects: Bool = true,
         showShadow: Bool = true,
-        speed: Double = 60
+        speed: Double = 60,
+        breathingIntensity: Double = 0,
+        breathingSpeed: Double = 0.25
     ) {
         self.backgroundColors = backgroundColors
         self.glowColor = glowColor
@@ -43,5 +47,7 @@ public struct OrbConfiguration {
         self.showShadow = showShadow
         self.coreGlowIntensity = coreGlowIntensity
         self.speed = speed
+        self.breathingIntensity = breathingIntensity
+        self.breathingSpeed = breathingSpeed
     }
 }

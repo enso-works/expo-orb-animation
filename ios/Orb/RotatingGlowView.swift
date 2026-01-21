@@ -20,24 +20,27 @@ enum RotationDirection {
 }
 
 struct RotatingGlowView: View {
-    @State private var rotation: Double = 0
-
     private let color: Color
     private let rotationSpeed: Double
     private let direction: RotationDirection
+    private let elapsedTime: Double
 
     init(color: Color,
          rotationSpeed: Double = 30,
-         direction: RotationDirection)
+         direction: RotationDirection,
+         elapsedTime: Double = 0)
     {
         self.color = color
         self.rotationSpeed = rotationSpeed
         self.direction = direction
+        self.elapsedTime = elapsedTime
     }
 
     var body: some View {
         GeometryReader { geometry in
             let size = min(geometry.size.width, geometry.size.height)
+            let safeSpeed = max(0.01, rotationSpeed)
+            let rotation = elapsedTime * safeSpeed * direction.multiplier
 
             Circle()
                 .fill(color)
@@ -54,11 +57,6 @@ struct RotatingGlowView: View {
                     }
                 }
                 .rotationEffect(.degrees(rotation))
-                .onAppear {
-                    withAnimation(.linear(duration: 360 / rotationSpeed).repeatForever(autoreverses: false)) {
-                        rotation = 360 * direction.multiplier
-                    }
-                }
         }
     }
 }

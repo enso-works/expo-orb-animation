@@ -5,6 +5,8 @@ export type ExpoIosOrbViewProps = {
   glowColor?: ColorValue;
   particleColor?: ColorValue;
   coreGlowIntensity?: number;
+  breathingIntensity?: number;
+  breathingSpeed?: number;
   showBackground?: boolean;
   showWavyBlobs?: boolean;
   showParticles?: boolean;
@@ -12,4 +14,6 @@ export type ExpoIosOrbViewProps = {
   showShadow?: boolean;
   speed?: number;
   style?: StyleProp<ViewStyle>;
+  // NOTE: activity is NOT a prop - use setOrbActivity() function instead
+  // to bypass React's prop reconciliation and prevent animation flickering
 };

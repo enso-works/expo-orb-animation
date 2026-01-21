@@ -13,7 +13,8 @@ private struct OrbContainerView: View {
   @ObservedObject var model: OrbConfigurationModel
 
   var body: some View {
-    OrbView(configuration: model.configuration)
+    // OrbView reads activity from OrbSharedState directly during animation loop
+    OrbView(configuration: model.configuration, useSharedActivityState: true)
   }
 }
 
@@ -28,6 +29,8 @@ struct OrbProps {
   var glowColor: UIColor = .white
   var particleColor: UIColor = .white
   var coreGlowIntensity: Double = 1.0
+  var breathingIntensity: Double = 0
+  var breathingSpeed: Double = 0.25
   var showBackground: Bool = true
   var showWavyBlobs: Bool = true
   var showParticles: Bool = true
@@ -41,6 +44,8 @@ struct OrbProps {
       : OrbProps.defaultBackgroundColors
     let safeSpeed = max(1, speed)
     let safeIntensity = max(0, coreGlowIntensity)
+    let safeBreathingIntensity = max(0, breathingIntensity)
+    let safeBreathingSpeed = max(0.05, breathingSpeed)
 
     return OrbConfiguration(
       backgroundColors: resolvedBackgroundColors.map { Color(uiColor: $0) },
@@ -52,7 +57,9 @@ struct OrbProps {
       showParticles: showParticles,
       showGlowEffects: showGlowEffects,
       showShadow: showShadow,
-      speed: safeSpeed
+      speed: safeSpeed,
+      breathingIntensity: safeBreathingIntensity,
+      breathingSpeed: safeBreathingSpeed
     )
   }
 }
@@ -88,5 +95,11 @@ class ExpoIosOrbView: ExpoView {
   func updateProps(_ update: (inout OrbProps) -> Void) {
     update(&props)
     model.configuration = props.makeConfiguration()
+  }
+
+  func setTargetActivity(_ target: Double) {
+    // Write to shared state - no SwiftUI re-render triggered
+    // OrbView reads this during its animation loop
+    OrbSharedState.shared.targetActivity = max(0, min(1, target))
   }
 }
