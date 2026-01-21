@@ -1,50 +1,79 @@
 package expo.modules.iosorb
 
+import android.graphics.Color as AndroidColor
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import java.net.URL
 
 class ExpoIosOrbModule : Module() {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
-  override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoIosOrb')` in JavaScript.
-    Name("ExpoIosOrb")
+    override fun definition() = ModuleDefinition {
+        Name("ExpoIosOrb")
 
-    // Defines constant property on the module.
-    Constant("PI") {
-      Math.PI
+        // Activity function - bypasses React's prop reconciliation
+        Function("setActivity") { activity: Double ->
+            val clampedActivity = activity.coerceIn(0.0, 1.0)
+            OrbSharedState.targetActivity = clampedActivity
+        }
+
+        View(ExpoIosOrbView::class) {
+            // Colors come as strings (hex) or integers from React Native
+            Prop("backgroundColors") { view: ExpoIosOrbView, colors: List<Any> ->
+                val parsedColors = colors.map { parseColor(it) }
+                view.setBackgroundColors(parsedColors)
+            }
+
+            Prop("glowColor") { view: ExpoIosOrbView, color: Any ->
+                view.setGlowColor(parseColor(color))
+            }
+
+            Prop("particleColor") { view: ExpoIosOrbView, color: Any ->
+                view.setParticleColor(parseColor(color))
+            }
+
+            Prop("coreGlowIntensity") { view: ExpoIosOrbView, value: Double ->
+                view.setCoreGlowIntensity(value)
+            }
+
+            Prop("breathingIntensity") { view: ExpoIosOrbView, value: Double ->
+                view.setBreathingIntensity(value)
+            }
+
+            Prop("breathingSpeed") { view: ExpoIosOrbView, value: Double ->
+                view.setBreathingSpeed(value)
+            }
+
+            Prop("showBackground") { view: ExpoIosOrbView, value: Boolean ->
+                view.setShowBackground(value)
+            }
+
+            Prop("showWavyBlobs") { view: ExpoIosOrbView, value: Boolean ->
+                view.setShowWavyBlobs(value)
+            }
+
+            Prop("showParticles") { view: ExpoIosOrbView, value: Boolean ->
+                view.setShowParticles(value)
+            }
+
+            Prop("showGlowEffects") { view: ExpoIosOrbView, value: Boolean ->
+                view.setShowGlowEffects(value)
+            }
+
+            Prop("showShadow") { view: ExpoIosOrbView, value: Boolean ->
+                view.setShowShadow(value)
+            }
+
+            Prop("speed") { view: ExpoIosOrbView, value: Double ->
+                view.setSpeed(value)
+            }
+        }
     }
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
+    private fun parseColor(value: Any): Int {
+        return when (value) {
+            is String -> AndroidColor.parseColor(value)
+            is Int -> value
+            is Double -> value.toInt()
+            is Long -> value.toInt()
+            else -> AndroidColor.WHITE
+        }
     }
-
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of
-    // the view definition: Prop, Events.
-    View(ExpoIosOrbView::class) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { view: ExpoIosOrbView, url: URL ->
-        view.webView.loadUrl(url.toString())
-      }
-      // Defines an event that the view can send to JavaScript.
-      Events("onLoad")
-    }
-  }
 }
