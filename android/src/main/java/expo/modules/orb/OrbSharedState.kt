@@ -1,4 +1,4 @@
-package expo.modules.iosorb
+package expo.modules.orb
 
 /**
  * Shared state for activity animation - mirrors iOS OrbSharedState.

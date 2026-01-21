@@ -1,9 +1,9 @@
 {
   "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": ["ExpoIosOrbModule"]
+    "modules": ["ExpoOrbModule"]
   },
   "android": {
-    "modules": ["expo.modules.iosorb.ExpoIosOrbModule"]
+    "modules": ["expo.modules.orb.ExpoOrbModule"]
   }
 }

@@ -64,7 +64,7 @@ struct OrbProps {
   }
 }
 
-class ExpoIosOrbView: ExpoView {
+class ExpoOrbView: ExpoView {
   private var props = OrbProps()
   private let model: OrbConfigurationModel
   private let hostingController: UIHostingController<OrbContainerView>

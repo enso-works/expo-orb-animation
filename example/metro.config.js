@@ -19,7 +19,7 @@ config.resolver.nodeModulesPaths = [
 ];
 
 config.resolver.extraNodeModules = {
-  'expo-ios-orb': '..',
+  'expo-orb': '..',
 };
 
 config.watchFolders = [path.resolve(__dirname, '..')];

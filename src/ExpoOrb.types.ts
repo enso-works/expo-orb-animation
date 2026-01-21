@@ -1,6 +1,6 @@
 import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
 
-export type ExpoIosOrbViewProps = {
+export type ExpoOrbViewProps = {
   backgroundColors?: ColorValue[];
   glowColor?: ColorValue;
   particleColor?: ColorValue;

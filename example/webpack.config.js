@@ -6,7 +6,7 @@ module.exports = async (env, argv) => {
     {
       ...env,
       babel: {
-        dangerouslyAddModulePathsToTranspile: ['expo-ios-orb'],
+        dangerouslyAddModulePathsToTranspile: ['expo-orb'],
       },
     },
     argv

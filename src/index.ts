@@ -1,3 +1,3 @@
-export { default, setOrbActivity } from './ExpoIosOrbModule';
-export { default as ExpoIosOrbView } from './ExpoIosOrbView';
-export * from  './ExpoIosOrb.types';
+export { default, setOrbActivity } from './ExpoOrbModule';
+export { default as ExpoOrbView } from './ExpoOrbView';
+export * from  './ExpoOrb.types';

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-ios-orb-example",
-    "slug": "expo-ios-orb-example",
+    "name": "expo-orb-example",
+    "slug": "expo-orb-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.iosorb.example"
+      "bundleIdentifier": "expo.modules.orb.example"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "expo.modules.iosorb.example"
+      "package": "expo.modules.orb.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"

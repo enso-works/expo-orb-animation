@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "expo-ios-orb": ["../src/index"],
-      "expo-ios-orb/*": ["../src/*"]
+      "expo-orb": ["../src/index"],
+      "expo-orb/*": ["../src/*"]
     }
   }
 }

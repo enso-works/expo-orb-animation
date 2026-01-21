@@ -1,4 +1,4 @@
-package expo.modules.iosorb
+package expo.modules.orb
 
 import androidx.compose.ui.graphics.Color
 

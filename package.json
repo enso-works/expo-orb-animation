@@ -1,7 +1,7 @@
 {
-  "name": "expo-ios-orb",
+  "name": "expo-orb",
   "version": "0.1.0",
-  "description": "orb animation for ios in expo",
+  "description": "Animated orb component for React Native (iOS, Android, Web)",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -18,16 +18,19 @@
   "keywords": [
     "react-native",
     "expo",
-    "expo-ios-orb",
-    "ExpoIosOrb"
+    "expo-orb",
+    "orb",
+    "animation",
+    "ios",
+    "android"
   ],
-  "repository": "https://github.com/enso-works/expo-ios-orb",
+  "repository": "https://github.com/enso-works/expo-orb",
   "bugs": {
-    "url": "https://github.com/enso-works/expo-ios-orb/issues"
+    "url": "https://github.com/enso-works/expo-orb/issues"
   },
   "author": "Ensar Bavrk <ensar.bavrk@gmail.com> (https://github.com/enso-works)",
   "license": "MIT",
-  "homepage": "https://github.com/enso-works/expo-ios-orb#readme",
+  "homepage": "https://github.com/enso-works/expo-orb#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/react": "~19.1.0",

@@ -1,12 +1,12 @@
-package expo.modules.iosorb
+package expo.modules.orb
 
 import android.graphics.Color as AndroidColor
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-class ExpoIosOrbModule : Module() {
+class ExpoOrbModule : Module() {
     override fun definition() = ModuleDefinition {
-        Name("ExpoIosOrb")
+        Name("ExpoOrb")
 
         // Activity function - bypasses React's prop reconciliation
         Function("setActivity") { activity: Double ->
@@ -14,54 +14,54 @@ class ExpoIosOrbModule : Module() {
             OrbSharedState.targetActivity = clampedActivity
         }
 
-        View(ExpoIosOrbView::class) {
+        View(ExpoOrbView::class) {
             // Colors come as strings (hex) or integers from React Native
-            Prop("backgroundColors") { view: ExpoIosOrbView, colors: List<Any> ->
+            Prop("backgroundColors") { view: ExpoOrbView, colors: List<Any> ->
                 val parsedColors = colors.map { parseColor(it) }
                 view.setBackgroundColors(parsedColors)
             }
 
-            Prop("glowColor") { view: ExpoIosOrbView, color: Any ->
+            Prop("glowColor") { view: ExpoOrbView, color: Any ->
                 view.setGlowColor(parseColor(color))
             }
 
-            Prop("particleColor") { view: ExpoIosOrbView, color: Any ->
+            Prop("particleColor") { view: ExpoOrbView, color: Any ->
                 view.setParticleColor(parseColor(color))
             }
 
-            Prop("coreGlowIntensity") { view: ExpoIosOrbView, value: Double ->
+            Prop("coreGlowIntensity") { view: ExpoOrbView, value: Double ->
                 view.setCoreGlowIntensity(value)
             }
 
-            Prop("breathingIntensity") { view: ExpoIosOrbView, value: Double ->
+            Prop("breathingIntensity") { view: ExpoOrbView, value: Double ->
                 view.setBreathingIntensity(value)
             }
 
-            Prop("breathingSpeed") { view: ExpoIosOrbView, value: Double ->
+            Prop("breathingSpeed") { view: ExpoOrbView, value: Double ->
                 view.setBreathingSpeed(value)
             }
 
-            Prop("showBackground") { view: ExpoIosOrbView, value: Boolean ->
+            Prop("showBackground") { view: ExpoOrbView, value: Boolean ->
                 view.setShowBackground(value)
             }
 
-            Prop("showWavyBlobs") { view: ExpoIosOrbView, value: Boolean ->
+            Prop("showWavyBlobs") { view: ExpoOrbView, value: Boolean ->
                 view.setShowWavyBlobs(value)
             }
 
-            Prop("showParticles") { view: ExpoIosOrbView, value: Boolean ->
+            Prop("showParticles") { view: ExpoOrbView, value: Boolean ->
                 view.setShowParticles(value)
             }
 
-            Prop("showGlowEffects") { view: ExpoIosOrbView, value: Boolean ->
+            Prop("showGlowEffects") { view: ExpoOrbView, value: Boolean ->
                 view.setShowGlowEffects(value)
             }
 
-            Prop("showShadow") { view: ExpoIosOrbView, value: Boolean ->
+            Prop("showShadow") { view: ExpoOrbView, value: Boolean ->
                 view.setShowShadow(value)
             }
 
-            Prop("speed") { view: ExpoIosOrbView, value: Double ->
+            Prop("speed") { view: ExpoOrbView, value: Double ->
                 view.setSpeed(value)
             }
         }

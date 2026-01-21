@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 
-import { ExpoIosOrbView, setOrbActivity } from 'expo-ios-orb';
+import { ExpoOrbView, setOrbActivity } from 'expo-orb';
 
 // Memoized orb component - prevents re-renders from parent state changes
 const MemoizedOrb = React.memo(() => (
-  <ExpoIosOrbView
+  <ExpoOrbView
     style={styles.orb}
     backgroundColors={['#7c3aed', '#3b82f6', '#ec4899']}
     glowColor="#ffffff"

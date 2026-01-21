@@ -1,6 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo';
 
-declare class ExpoIosOrbModule extends NativeModule {
+declare class ExpoOrbModule extends NativeModule {
   /**
    * Set the activity level (0-1) for the orb animation.
    * Uses a native function instead of a prop to bypass React's reconciliation
@@ -9,7 +9,7 @@ declare class ExpoIosOrbModule extends NativeModule {
   setActivity(activity: number): void;
 }
 
-const module = requireNativeModule<ExpoIosOrbModule>('ExpoIosOrb');
+const module = requireNativeModule<ExpoOrbModule>('ExpoOrb');
 
 export default module;
 

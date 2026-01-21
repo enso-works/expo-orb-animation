@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { ExpoIosOrbViewProps } from './ExpoIosOrb.types';
+import { ExpoOrbViewProps } from './ExpoOrb.types';
 
 const defaultColors = ['#22c55e', '#3b82f6', '#ec4899'];
 
-export default function ExpoIosOrbView(props: ExpoIosOrbViewProps) {
+export default function ExpoOrbView(props: ExpoOrbViewProps) {
   const colors = Array.isArray(props.backgroundColors) &&
     props.backgroundColors.every((color) => typeof color === 'string')
     ? (props.backgroundColors as string[])

@@ -1,4 +1,4 @@
-package expo.modules.iosorb
+package expo.modules.orb
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.views.ExpoView
 
-class ExpoIosOrbView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
+class ExpoOrbView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
 
     // Mutable state for configuration
     private var config by mutableStateOf(OrbConfiguration())
