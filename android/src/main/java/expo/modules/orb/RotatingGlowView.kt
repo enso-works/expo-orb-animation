@@ -74,16 +74,16 @@ fun SimpleRotatingGlow(
         val center = Offset(size.width / 2f, size.height / 2f)
 
         rotate(rotation, pivot = center) {
-            // Draw offset glow to create rotating effect
+            // Draw offset glow to create rotating effect - subtle and smaller
             drawCircle(
-                color = color.copy(alpha = (safeAlpha * 0.9f).coerceIn(0f, 1f)),
-                radius = sizePx * 0.4f,
-                center = Offset(center.x, center.y - sizePx * 0.15f)
+                color = color.copy(alpha = (safeAlpha * 0.5f).coerceIn(0f, 1f)),
+                radius = sizePx * 0.25f,
+                center = Offset(center.x, center.y - sizePx * 0.12f)
             )
             drawCircle(
-                color = color.copy(alpha = (safeAlpha * 0.6f).coerceIn(0f, 1f)),
-                radius = sizePx * 0.3f,
-                center = Offset(center.x + sizePx * 0.1f, center.y + sizePx * 0.1f)
+                color = color.copy(alpha = (safeAlpha * 0.35f).coerceIn(0f, 1f)),
+                radius = sizePx * 0.18f,
+                center = Offset(center.x + sizePx * 0.08f, center.y + sizePx * 0.08f)
             )
         }
     }

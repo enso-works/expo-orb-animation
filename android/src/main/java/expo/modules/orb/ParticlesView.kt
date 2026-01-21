@@ -68,7 +68,7 @@ fun ParticlesView(
 
             drawCircle(
                 color = color.copy(alpha = lifecycleAlpha),
-                radius = particle.size * 4f,
+                radius = particle.size * 12f,
                 center = Offset(x.toFloat(), y.toFloat()),
                 blendMode = BlendMode.Plus
             )
