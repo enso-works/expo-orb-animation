@@ -8,11 +8,10 @@ Inspired by and iOS implementation from [metasidd/Orb](https://github.com/metasi
 
 | iOS | Android |
 |:---:|:-------:|
-| ![iOS Demo](docs/demo-ios.gif) | ![Android Demo](docs/demo-android.gif) |
+| ![iOS Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-ios.gif) | ![Android Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-android.gif) |
 
 ## Features
 
-- Cross-platform support (iOS, Android, Web)
 - Smooth 60fps animations
 - Activity-based animation states (idle, speaking, etc.)
 - Breathing animation effect

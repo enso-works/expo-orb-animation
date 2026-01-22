@@ -24,13 +24,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/enso-works/expo-orb",
+  "repository": "https://github.com/enso-works/expo-orb-animation",
   "bugs": {
-    "url": "https://github.com/enso-works/expo-orb/issues"
+    "url": "https://github.com/enso-works/expo-orb-animation/issues"
   },
   "author": "Ensar Bavrk <ensar.bavrk@gmail.com> (https://github.com/enso-works)",
   "license": "MIT",
-  "homepage": "https://github.com/enso-works/expo-orb#readme",
+  "homepage": "https://github.com/enso-works/expo-orb-animation#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/react": "~19.1.0",
