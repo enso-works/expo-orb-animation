@@ -14,6 +14,4 @@ export type ExpoOrbViewProps = {
   showShadow?: boolean;
   speed?: number;
   style?: StyleProp<ViewStyle>;
-  // NOTE: activity is NOT a prop - use setOrbActivity() function instead
-  // to bypass React's prop reconciliation and prevent animation flickering
 };

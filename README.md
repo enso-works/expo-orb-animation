@@ -2,6 +2,14 @@
 
 An animated orb component for React Native with Expo. Renders a glowing, animated sphere with particles, wavy blobs, and customizable visual effects.
 
+Inspired by and iOS implementation from [metasidd/Orb](https://github.com/metasidd/Orb)
+
+## Demo
+
+| iOS | Android |
+|:---:|:-------:|
+| ![iOS Demo](docs/demo-ios.gif) | ![Android Demo](docs/demo-android.gif) |
+
 ## Features
 
 - Cross-platform support (iOS, Android, Web)
