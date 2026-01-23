@@ -27,18 +27,48 @@ public struct BreathingExerciseView: View {
                         )
                     }
 
-                    // Main morphing blob with gradient
-                    MorphingBlobView(
-                        baseRadius: animState.scale * 0.7,
-                        pointCount: config.pointCount,
-                        offsets: animState.wobbleOffsets,
+                    // Base gradient background layer
+                    LinearGradient(
                         colors: config.blobColors,
-                        innerColor: config.innerBlobColor,
-                        showInnerBlob: config.showInnerBlob,
-                        elapsedTime: elapsedTime
+                        startPoint: .bottom,
+                        endPoint: .top
                     )
-                    .frame(width: size, height: size)
 
+                    // Base depth glows - creates depth with rotating glow effects
+                    baseDepthGlows(size: size, elapsedTime: elapsedTime)
+
+                    // Wavy blobs - adds organic movement with flowing blob shapes
+                    if config.showWavyBlobs {
+                        wavyBlob(size: size, elapsedTime: elapsedTime)
+                        wavyBlobTwo(size: size, elapsedTime: elapsedTime)
+                    }
+
+                    // Core glow effects - adds bright, energetic core glow animations
+                    if config.showGlowEffects {
+                        coreGlowEffects(size: size, elapsedTime: elapsedTime)
+                    }
+
+                    // Particles - overlays floating particle effects for additional dynamism
+                    if config.showParticles {
+                        particleView
+                            .frame(maxWidth: size, maxHeight: size)
+                    }
+                }
+                // Inner glows overlay for depth
+                .overlay {
+                    realisticInnerGlows
+                }
+                // Mask with morphing blob shape
+                .mask {
+                    MorphingBlobShape(
+                        center: CGPoint(x: size / 2, y: size / 2),
+                        baseRadius: animState.scale * 0.7 * size / 2,
+                        pointCount: config.pointCount,
+                        offsets: animState.wobbleOffsets
+                    )
+                }
+                .frame(width: size, height: size)
+                .overlay {
                     // Text cue
                     if config.showTextCue && !animState.label.isEmpty {
                         BreathingTextCue(
@@ -47,7 +77,6 @@ public struct BreathingExerciseView: View {
                         )
                     }
                 }
-                .frame(width: size, height: size)
                 .modifier(
                     BreathingShadowModifier(
                         colors: config.showShadow ? config.blobColors : [.clear],
@@ -58,6 +87,155 @@ public struct BreathingExerciseView: View {
             }
             .aspectRatio(1, contentMode: .fit)
         }
+    }
+
+    // MARK: - Visual Effects (from OrbView)
+
+    private var particleView: some View {
+        ZStack {
+            ParticlesView(
+                color: config.particleColor,
+                speedRange: 10...20,
+                sizeRange: 0.5...1,
+                particleCount: 10,
+                opacityRange: 0...0.3
+            )
+            .blur(radius: 1)
+
+            ParticlesView(
+                color: config.particleColor,
+                speedRange: 20...30,
+                sizeRange: 0.2...1,
+                particleCount: 10,
+                opacityRange: 0.3...0.8
+            )
+        }
+        .blendMode(.plusLighter)
+    }
+
+    private func wavyBlob(size: CGFloat, elapsedTime: Double) -> some View {
+        let blobSpeed: Double = 20
+
+        return RotatingGlowView(
+            color: .white.opacity(0.75),
+            rotationSpeed: blobSpeed * 1.5,
+            direction: .clockwise,
+            elapsedTime: elapsedTime
+        )
+        .mask {
+            WavyBlobView(color: .white, loopDuration: 60 / blobSpeed * 1.75)
+                .frame(maxWidth: size * 1.875)
+                .offset(x: 0, y: size * 0.31)
+        }
+        .blur(radius: 1)
+        .blendMode(.plusLighter)
+    }
+
+    private func wavyBlobTwo(size: CGFloat, elapsedTime: Double) -> some View {
+        let blobSpeed: Double = 20
+
+        return RotatingGlowView(
+            color: .white,
+            rotationSpeed: blobSpeed * 0.75,
+            direction: .counterClockwise,
+            elapsedTime: elapsedTime
+        )
+        .mask {
+            WavyBlobView(color: .white, loopDuration: 60 / blobSpeed * 2.25)
+                .frame(maxWidth: size * 1.25)
+                .rotationEffect(.degrees(90))
+                .offset(x: 0, y: size * -0.31)
+        }
+        .opacity(0.5)
+        .blur(radius: 1)
+        .blendMode(.plusLighter)
+    }
+
+    private func coreGlowEffects(size: CGFloat, elapsedTime: Double) -> some View {
+        let speed: Double = 18.0
+        let glowIntensity: Double = 0.8
+
+        return ZStack {
+            RotatingGlowView(
+                color: config.glowColor,
+                rotationSpeed: speed * 1.2,
+                direction: .clockwise,
+                elapsedTime: elapsedTime
+            )
+            .blur(radius: size * 0.08)
+            .opacity(glowIntensity)
+
+            RotatingGlowView(
+                color: config.glowColor,
+                rotationSpeed: speed * 0.9,
+                direction: .clockwise,
+                elapsedTime: elapsedTime
+            )
+            .blur(radius: size * 0.06)
+            .opacity(glowIntensity)
+            .blendMode(.plusLighter)
+        }
+        .padding(size * 0.08)
+    }
+
+    private func baseDepthGlows(size: CGFloat, elapsedTime: Double) -> some View {
+        let speed: Double = 18.0
+
+        return ZStack {
+            // Outer glow
+            RotatingGlowView(
+                color: config.glowColor,
+                rotationSpeed: speed * 0.75,
+                direction: .counterClockwise,
+                elapsedTime: elapsedTime
+            )
+            .padding(size * 0.03)
+            .blur(radius: size * 0.06)
+            .rotationEffect(.degrees(180))
+            .blendMode(.destinationOver)
+
+            // Outer ring
+            RotatingGlowView(
+                color: config.glowColor.opacity(0.5),
+                rotationSpeed: speed * 0.25,
+                direction: .clockwise,
+                elapsedTime: elapsedTime
+            )
+            .frame(maxWidth: size * 0.94)
+            .rotationEffect(.degrees(180))
+            .padding(8)
+            .blur(radius: size * 0.032)
+        }
+    }
+
+    private var orbOutlineColor: LinearGradient {
+        LinearGradient(
+            colors: [.white, .clear],
+            startPoint: .bottom,
+            endPoint: .top
+        )
+    }
+
+    private var realisticInnerGlows: some View {
+        ZStack {
+            // Outer stroke with heavy blur
+            Circle()
+                .stroke(orbOutlineColor, lineWidth: 8)
+                .blur(radius: 32)
+                .blendMode(.plusLighter)
+
+            // Inner stroke with light blur
+            Circle()
+                .stroke(orbOutlineColor, lineWidth: 4)
+                .blur(radius: 12)
+                .blendMode(.plusLighter)
+
+            Circle()
+                .stroke(orbOutlineColor, lineWidth: 1)
+                .blur(radius: 4)
+                .blendMode(.plusLighter)
+        }
+        .padding(1)
     }
 
     private struct AnimState {

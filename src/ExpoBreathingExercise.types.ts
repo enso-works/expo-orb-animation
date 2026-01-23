@@ -31,13 +31,18 @@ export interface ExerciseCompleteEvent {
 export interface ExpoBreathingExerciseViewProps {
   blobColors?: ColorValue[];
   innerBlobColor?: ColorValue;
+  glowColor?: ColorValue;
+  particleColor?: ColorValue;
   progressRingColor?: ColorValue;
   textColor?: ColorValue;
   showProgressRing?: boolean;
   showTextCue?: boolean;
   showInnerBlob?: boolean;
   showShadow?: boolean;
-  pointCount?: number;           // Morphing points (default: 28)
+  showParticles?: boolean;
+  showWavyBlobs?: boolean;
+  showGlowEffects?: boolean;
+  pointCount?: number;           // Morphing points (default: 8)
   wobbleIntensity?: number;      // 0-1
   onPhaseChange?: (event: { nativeEvent: PhaseChangeEvent }) => void;
   onExerciseComplete?: (event: { nativeEvent: ExerciseCompleteEvent }) => void;

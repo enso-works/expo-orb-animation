@@ -53,6 +53,14 @@ public class ExpoBreathingExerciseModule: Module {
                 view.updateProps { $0.innerBlobColor = color }
             }
 
+            Prop("glowColor") { (view: ExpoBreathingExerciseView, color: UIColor) in
+                view.updateProps { $0.glowColor = color }
+            }
+
+            Prop("particleColor") { (view: ExpoBreathingExerciseView, color: UIColor) in
+                view.updateProps { $0.particleColor = color }
+            }
+
             Prop("progressRingColor") { (view: ExpoBreathingExerciseView, color: UIColor) in
                 view.updateProps { $0.progressRingColor = color }
             }
@@ -75,6 +83,18 @@ public class ExpoBreathingExerciseModule: Module {
 
             Prop("showShadow") { (view: ExpoBreathingExerciseView, value: Bool) in
                 view.updateProps { $0.showShadow = value }
+            }
+
+            Prop("showParticles") { (view: ExpoBreathingExerciseView, value: Bool) in
+                view.updateProps { $0.showParticles = value }
+            }
+
+            Prop("showWavyBlobs") { (view: ExpoBreathingExerciseView, value: Bool) in
+                view.updateProps { $0.showWavyBlobs = value }
+            }
+
+            Prop("showGlowEffects") { (view: ExpoBreathingExerciseView, value: Bool) in
+                view.updateProps { $0.showGlowEffects = value }
             }
 
             Prop("pointCount") { (view: ExpoBreathingExerciseView, value: Int) in

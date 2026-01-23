@@ -26,12 +26,17 @@ struct BreathingProps {
 
     var blobColors: [UIColor] = BreathingProps.defaultBlobColors
     var innerBlobColor: UIColor = UIColor.white.withAlphaComponent(0.3)
+    var glowColor: UIColor = .white
+    var particleColor: UIColor = .white
     var progressRingColor: UIColor = UIColor.white.withAlphaComponent(0.5)
     var textColor: UIColor = .white
     var showProgressRing: Bool = true
     var showTextCue: Bool = true
     var showInnerBlob: Bool = true
     var showShadow: Bool = true
+    var showParticles: Bool = true
+    var showWavyBlobs: Bool = true
+    var showGlowEffects: Bool = true
     var pointCount: Int = 8
     var wobbleIntensity: Double = 1.0
 
@@ -43,12 +48,17 @@ struct BreathingProps {
         return BreathingConfiguration(
             blobColors: resolvedBlobColors.map { Color(uiColor: $0) },
             innerBlobColor: Color(uiColor: innerBlobColor),
+            glowColor: Color(uiColor: glowColor),
+            particleColor: Color(uiColor: particleColor),
             progressRingColor: Color(uiColor: progressRingColor),
             textColor: Color(uiColor: textColor),
             showProgressRing: showProgressRing,
             showTextCue: showTextCue,
             showInnerBlob: showInnerBlob,
             showShadow: showShadow,
+            showParticles: showParticles,
+            showWavyBlobs: showWavyBlobs,
+            showGlowEffects: showGlowEffects,
             pointCount: max(6, pointCount),
             wobbleIntensity: max(0, min(1, wobbleIntensity))
         )
