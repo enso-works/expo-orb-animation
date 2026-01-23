@@ -9,7 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -32,9 +35,16 @@ fun BreathingTextCue(
         ) { currentText ->
             Text(
                 text = currentText,
-                color = color,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Medium
+                style = TextStyle(
+                    color = color,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    shadow = Shadow(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        offset = Offset(0f, 2f),
+                        blurRadius = 8f
+                    )
+                )
             )
         }
     }

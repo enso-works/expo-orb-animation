@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import expo.modules.kotlin.AppContext
+import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
 
 class ExpoBreathingExerciseView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
@@ -119,5 +120,25 @@ class ExpoBreathingExerciseView(context: Context, appContext: AppContext) : Expo
 
     fun setWobbleIntensity(value: Double) {
         config = config.copy(wobbleIntensity = value.coerceIn(0.0, 1.0))
+    }
+
+    fun setGlowColor(color: Int) {
+        config = config.copy(glowColor = Color(color))
+    }
+
+    fun setParticleColor(color: Int) {
+        config = config.copy(particleColor = Color(color))
+    }
+
+    fun setShowParticles(value: Boolean) {
+        config = config.copy(showParticles = value)
+    }
+
+    fun setShowWavyBlobs(value: Boolean) {
+        config = config.copy(showWavyBlobs = value)
+    }
+
+    fun setShowGlowEffects(value: Boolean) {
+        config = config.copy(showGlowEffects = value)
     }
 }

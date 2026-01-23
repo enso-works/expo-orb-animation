@@ -93,21 +93,21 @@ public struct BreathingExerciseView: View {
 
     private var particleView: some View {
         ZStack {
-            ParticlesView(
+            BreathingParticlesView(
                 color: config.particleColor,
+                particleCount: 15,
                 speedRange: 10...20,
-                sizeRange: 0.5...1,
-                particleCount: 10,
-                opacityRange: 0...0.3
+                sizeRange: 1...3,
+                opacityRange: 0.1...0.4
             )
             .blur(radius: 1)
 
-            ParticlesView(
+            BreathingParticlesView(
                 color: config.particleColor,
-                speedRange: 20...30,
-                sizeRange: 0.2...1,
                 particleCount: 10,
-                opacityRange: 0.3...0.8
+                speedRange: 20...35,
+                sizeRange: 0.5...2,
+                opacityRange: 0.3...0.7
             )
         }
         .blendMode(.plusLighter)

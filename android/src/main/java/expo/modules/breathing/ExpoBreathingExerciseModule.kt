@@ -74,6 +74,26 @@ class ExpoBreathingExerciseModule : Module() {
                 view.setShowShadow(value)
             }
 
+            Prop("showParticles") { view: ExpoBreathingExerciseView, value: Boolean ->
+                view.setShowParticles(value)
+            }
+
+            Prop("showWavyBlobs") { view: ExpoBreathingExerciseView, value: Boolean ->
+                view.setShowWavyBlobs(value)
+            }
+
+            Prop("showGlowEffects") { view: ExpoBreathingExerciseView, value: Boolean ->
+                view.setShowGlowEffects(value)
+            }
+
+            Prop("glowColor") { view: ExpoBreathingExerciseView, color: Any ->
+                view.setGlowColor(parseColor(color))
+            }
+
+            Prop("particleColor") { view: ExpoBreathingExerciseView, color: Any ->
+                view.setParticleColor(parseColor(color))
+            }
+
             Prop("pointCount") { view: ExpoBreathingExerciseView, value: Int ->
                 view.setPointCount(value)
             }
@@ -130,6 +150,7 @@ class ExpoBreathingExerciseModule : Module() {
         val firstPhase = phases[0]
         state.currentPhase = firstPhase.phase
         state.currentLabel = firstPhase.label
+        state.startScale = 1.0
         state.targetScale = firstPhase.targetScale
         state.currentScale = 1.0
         state.phaseProgress = 0.0

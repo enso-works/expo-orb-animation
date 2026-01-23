@@ -54,6 +54,9 @@ object BreathingSharedState {
     var targetScale: Double = 1.0
 
     @Volatile
+    var startScale: Double = 1.0  // Scale at start of current phase
+
+    @Volatile
     var currentPhase: BreathPhase = BreathPhase.IDLE
 
     @Volatile
@@ -95,6 +98,7 @@ object BreathingSharedState {
         currentCycle = 0
         currentScale = 1.0
         targetScale = 1.0
+        startScale = 1.0
         currentPhase = BreathPhase.IDLE
         currentLabel = ""
         phaseProgress = 0.0

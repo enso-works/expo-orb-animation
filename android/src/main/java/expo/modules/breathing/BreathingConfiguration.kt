@@ -9,12 +9,17 @@ data class BreathingConfiguration(
         Color(0xFF804DB3)   // Purple
     ),
     val innerBlobColor: Color = Color.White.copy(alpha = 0.3f),
+    val glowColor: Color = Color.White,
+    val particleColor: Color = Color.White,
     val progressRingColor: Color = Color.White.copy(alpha = 0.5f),
     val textColor: Color = Color.White,
     val showProgressRing: Boolean = true,
     val showTextCue: Boolean = true,
     val showInnerBlob: Boolean = true,
     val showShadow: Boolean = true,
-    val pointCount: Int = 28,
+    val showParticles: Boolean = true,
+    val showWavyBlobs: Boolean = true,
+    val showGlowEffects: Boolean = true,
+    val pointCount: Int = 8,
     val wobbleIntensity: Double = 1.0
 )
