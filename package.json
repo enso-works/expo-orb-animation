@@ -1,6 +1,6 @@
 {
   "name": "expo-orb",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Animated orb and breathing exercise components for React Native (iOS, Android)",
   "main": "build/index.js",
   "types": "build/index.d.ts",
