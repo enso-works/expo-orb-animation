@@ -1,9 +1,9 @@
 {
   "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": ["ExpoOrbModule"]
+    "modules": ["ExpoOrbModule", "ExpoBreathingExerciseModule"]
   },
   "android": {
-    "modules": ["expo.modules.orb.ExpoOrbModule"]
+    "modules": ["expo.modules.orb.ExpoOrbModule", "expo.modules.breathing.ExpoBreathingExerciseModule"]
   }
 }
