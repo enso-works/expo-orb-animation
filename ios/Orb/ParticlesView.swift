@@ -126,31 +126,75 @@ class ParticleScene: SKScene {
     }
 }
 
-struct ParticlesView: View {
-    let color: Color
-    let speedRange: ClosedRange<Double>
-    let sizeRange: ClosedRange<CGFloat>
-    let particleCount: Int
-    let opacityRange: ClosedRange<Double>
-    
-    var scene: SKScene {
-        let scene = ParticleScene(
-            size: CGSize(width: 300, height: 300), // Use fixed size
-            color: UIColor(color),
+class SceneHolder: ObservableObject {
+    let scene: ParticleScene
+
+    init(
+        color: UIColor,
+        speedRange: ClosedRange<Double>,
+        sizeRange: ClosedRange<CGFloat>,
+        particleCount: Int,
+        opacityRange: ClosedRange<Double>
+    ) {
+        self.scene = ParticleScene(
+            size: CGSize(width: 300, height: 300),
+            color: color,
             speedRange: speedRange,
             sizeRange: sizeRange,
             particleCount: particleCount,
             opacityRange: opacityRange
         )
         scene.scaleMode = .aspectFit
-        return scene
     }
-    
+
+    func updateSize(_ size: CGSize) {
+        if scene.size != size {
+            scene.size = size
+        }
+    }
+}
+
+struct ParticlesView: View {
+    let color: Color
+    let speedRange: ClosedRange<Double>
+    let sizeRange: ClosedRange<CGFloat>
+    let particleCount: Int
+    let opacityRange: ClosedRange<Double>
+
+    @StateObject private var holder: SceneHolder
+
+    init(
+        color: Color,
+        speedRange: ClosedRange<Double>,
+        sizeRange: ClosedRange<CGFloat>,
+        particleCount: Int,
+        opacityRange: ClosedRange<Double>
+    ) {
+        self.color = color
+        self.speedRange = speedRange
+        self.sizeRange = sizeRange
+        self.particleCount = particleCount
+        self.opacityRange = opacityRange
+        self._holder = StateObject(wrappedValue: SceneHolder(
+            color: UIColor(color),
+            speedRange: speedRange,
+            sizeRange: sizeRange,
+            particleCount: particleCount,
+            opacityRange: opacityRange
+        ))
+    }
+
     var body: some View {
         GeometryReader { geometry in
-            SpriteView(scene: scene, options: [.allowsTransparency])
+            SpriteView(scene: holder.scene, options: [.allowsTransparency])
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .ignoresSafeArea()
+                .onAppear {
+                    holder.updateSize(geometry.size)
+                }
+                .onChange(of: geometry.size) { newSize in
+                    holder.updateSize(newSize)
+                }
         }
     }
 }

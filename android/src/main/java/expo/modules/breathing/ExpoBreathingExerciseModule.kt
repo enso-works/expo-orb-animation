@@ -1,6 +1,9 @@
 package expo.modules.breathing
 
 import android.graphics.Color as AndroidColor
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -11,30 +14,38 @@ class ExpoBreathingExerciseModule : Module() {
         Events("onPhaseChange", "onExerciseComplete")
 
         Function("startBreathingExercise") { pattern: Map<String, Any?> ->
-            startExercise(pattern)
+            Handler(Looper.getMainLooper()).post {
+                startExercise(pattern)
+            }
         }
 
         Function("stopBreathingExercise") {
-            BreathingSharedState.reset()
+            Handler(Looper.getMainLooper()).post {
+                BreathingSharedState.reset()
+            }
         }
 
         Function("pauseBreathingExercise") {
-            val state = BreathingSharedState
-            if (state.state == BreathingExerciseState.RUNNING) {
-                state.state = BreathingExerciseState.PAUSED
-                state.pauseTime = System.nanoTime()
+            Handler(Looper.getMainLooper()).post {
+                val state = BreathingSharedState
+                if (state.state == BreathingExerciseState.RUNNING) {
+                    state.state = BreathingExerciseState.PAUSED
+                    state.pauseTime = System.nanoTime()
+                }
             }
         }
 
         Function("resumeBreathingExercise") {
-            val state = BreathingSharedState
-            val pauseTime = state.pauseTime
-            if (state.state == BreathingExerciseState.PAUSED && pauseTime != null) {
-                val pauseDuration = System.nanoTime() - pauseTime
-                state.phaseStartTime += pauseDuration
-                state.exerciseStartTime += pauseDuration
-                state.state = BreathingExerciseState.RUNNING
-                state.pauseTime = null
+            Handler(Looper.getMainLooper()).post {
+                val state = BreathingSharedState
+                val pauseTime = state.pauseTime
+                if (state.state == BreathingExerciseState.PAUSED && pauseTime != null) {
+                    val pauseDuration = System.nanoTime() - pauseTime
+                    state.phaseStartTime += pauseDuration
+                    state.exerciseStartTime += pauseDuration
+                    state.state = BreathingExerciseState.RUNNING
+                    state.pauseTime = null
+                }
             }
         }
 
@@ -167,7 +178,12 @@ class ExpoBreathingExerciseModule : Module() {
 
     private fun parseColor(value: Any): Int {
         return when (value) {
-            is String -> AndroidColor.parseColor(value)
+            is String -> try {
+                AndroidColor.parseColor(value)
+            } catch (e: IllegalArgumentException) {
+                Log.w("ExpoBreathingExercise", "Invalid color string: $value")
+                AndroidColor.WHITE
+            }
             is Int -> value
             is Double -> value.toInt()
             is Long -> value.toInt()

@@ -81,8 +81,9 @@ class ExpoBreathingExerciseView(context: Context, appContext: AppContext) : Expo
     }
 
     fun setBlobColors(colors: List<Int>) {
+        val mappedColors = colors.map { Color(it) }
         config = config.copy(
-            blobColors = colors.map { Color(it) }
+            blobColors = if (mappedColors.size >= 2) mappedColors else BreathingConfiguration().blobColors
         )
     }
 

@@ -1,6 +1,7 @@
 package expo.modules.orb
 
 import android.graphics.Color as AndroidColor
+import android.util.Log
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -69,7 +70,12 @@ class ExpoOrbModule : Module() {
 
     private fun parseColor(value: Any): Int {
         return when (value) {
-            is String -> AndroidColor.parseColor(value)
+            is String -> try {
+                AndroidColor.parseColor(value)
+            } catch (e: IllegalArgumentException) {
+                Log.w("ExpoOrb", "Invalid color string: $value")
+                AndroidColor.WHITE
+            }
             is Int -> value
             is Double -> value.toInt()
             is Long -> value.toInt()

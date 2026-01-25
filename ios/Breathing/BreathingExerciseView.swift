@@ -43,6 +43,18 @@ public struct BreathingExerciseView: View {
                         particleView
                             .frame(maxWidth: size, maxHeight: size)
                     }
+
+                    // Inner animated blob
+                    if config.showInnerBlob {
+                        InnerWavyBlob(
+                            center: CGPoint(x: size / 2, y: size / 2),
+                            baseRadius: animState.scale * 0.7 * size / 2 * 0.55,
+                            color: config.innerBlobColor,
+                            elapsedTime: elapsedTime
+                        )
+                        .blur(radius: 10)
+                        .blendMode(.plusLighter)
+                    }
                 }
                 // Inner glows overlay for depth
                 .overlay {

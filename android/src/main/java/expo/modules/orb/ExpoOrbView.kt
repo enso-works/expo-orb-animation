@@ -54,8 +54,9 @@ class ExpoOrbView(context: Context, appContext: AppContext) : ExpoView(context, 
     }
 
     fun setBackgroundColors(colors: List<Int>) {
+        val mappedColors = colors.map { Color(it) }
         config = config.copy(
-            backgroundColors = colors.map { Color(it) }
+            backgroundColors = if (mappedColors.size >= 2) mappedColors else OrbConfiguration().backgroundColors
         )
     }
 
