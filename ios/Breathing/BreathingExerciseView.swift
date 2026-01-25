@@ -17,16 +17,6 @@ public struct BreathingExerciseView: View {
                 let animState = updateAllAnimations(at: timeline.date, pointCount: config.pointCount)
 
                 ZStack {
-                    // Progress ring (behind blob)
-                    if config.showProgressRing && animState.isActive {
-                        ProgressRingView(
-                            progress: animState.phaseProgress,
-                            color: config.progressRingColor,
-                            lineWidth: 4,
-                            size: size * 0.95
-                        )
-                    }
-
                     // Base gradient background layer
                     LinearGradient(
                         colors: config.blobColors,
@@ -68,6 +58,17 @@ public struct BreathingExerciseView: View {
                     )
                 }
                 .frame(width: size, height: size)
+                .background {
+                    // Progress ring (behind blob, outside mask)
+                    if config.showProgressRing && animState.isActive {
+                        ProgressRingView(
+                            progress: animState.phaseProgress,
+                            color: config.progressRingColor,
+                            lineWidth: 4,
+                            size: size * 0.95
+                        )
+                    }
+                }
                 .overlay {
                     // Text cue
                     if config.showTextCue && !animState.label.isEmpty {
