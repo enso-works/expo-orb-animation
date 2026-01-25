@@ -9,6 +9,7 @@ import {
   stopBreathingExercise,
   getBreathingPreset,
 } from 'expo-orb';
+import EdgeCaseTests from './EdgeCaseTests';
 
 // Memoized orb component - prevents re-renders from parent state changes
 const MemoizedOrb = React.memo(() => (
@@ -25,7 +26,7 @@ const MemoizedOrb = React.memo(() => (
   />
 ));
 
-type Screen = 'orb' | 'breathing';
+type Screen = 'orb' | 'breathing' | 'tests';
 type BreathingPreset = 'box' | 'relaxing' | 'energizing' | 'calming';
 
 function OrbScreen() {
@@ -156,6 +157,7 @@ export default function App() {
         <TouchableOpacity
           style={[styles.tab, screen === 'orb' && styles.tabActive]}
           onPress={() => setScreen('orb')}
+          testID="tab-orb"
         >
           <Text style={[styles.tabText, screen === 'orb' && styles.tabTextActive]}>
             Orb
@@ -164,14 +166,26 @@ export default function App() {
         <TouchableOpacity
           style={[styles.tab, screen === 'breathing' && styles.tabActive]}
           onPress={() => setScreen('breathing')}
+          testID="tab-breathing"
         >
           <Text style={[styles.tabText, screen === 'breathing' && styles.tabTextActive]}>
             Breathing
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, screen === 'tests' && styles.tabActive]}
+          onPress={() => setScreen('tests')}
+          testID="tab-tests"
+        >
+          <Text style={[styles.tabText, screen === 'tests' && styles.tabTextActive]}>
+            Tests
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {screen === 'orb' ? <OrbScreen /> : <BreathingScreen />}
+      {screen === 'orb' && <OrbScreen />}
+      {screen === 'breathing' && <BreathingScreen />}
+      {screen === 'tests' && <EdgeCaseTests />}
     </SafeAreaView>
   );
 }
