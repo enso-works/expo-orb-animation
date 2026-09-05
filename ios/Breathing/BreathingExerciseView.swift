@@ -334,62 +334,72 @@ public struct BreathingExerciseView: View {
         }
     }
 
+    // Derives the phase from the absolute exercise start instead of advancing
+    // one phase per frame from "now": TimelineView stops ticking while the app
+    // is in the background, and the incremental version then re-anchored every
+    // missed phase to the moment frames resumed, drifting a full phase behind
+    // the wall clock (and behind anything else driven by the same schedule).
     private func updatePhaseState(at date: Date) {
         let state = BreathingSharedState.shared
         guard !state.phases.isEmpty else { return }
 
-        let currentPhaseConfig = state.phases[state.currentPhaseIndex]
-        let elapsed = date.timeIntervalSince(state.phaseStartTime)
-        let duration = currentPhaseConfig.duration
+        let cycleDuration = state.phases.reduce(0.0) { $0 + $1.duration }
+        guard cycleDuration > 0 else { return }
 
-        // Calculate progress through current phase
-        state.phaseProgress = min(1.0, elapsed / duration)
+        let elapsed = max(0, date.timeIntervalSince(state.exerciseStartTime))
+        let cycle = Int(elapsed / cycleDuration)
 
-        // Check if phase is complete
-        if elapsed >= duration {
-            // Move to next phase
-            state.currentPhaseIndex = (state.currentPhaseIndex + 1) % state.phases.count
-
-            // Check if we completed a cycle
-            if state.currentPhaseIndex == 0 {
-                state.currentCycle += 1
-
-                // Check if exercise is complete
-                if let totalCycles = state.totalCycles, state.currentCycle >= totalCycles {
-                    state.state = .complete
-                    state.totalDuration = date.timeIntervalSince(state.exerciseStartTime)
-                    state.onExerciseComplete?(state.currentCycle, state.totalDuration)
-                    return
-                }
-            }
-
-            // Start new phase
-            state.phaseStartTime = date
-            let newPhaseConfig = state.phases[state.currentPhaseIndex]
-            state.currentPhase = newPhaseConfig.phase
-            state.currentLabel = newPhaseConfig.label
-            state.startScale = state.currentScale  // Remember where we're starting from
-            state.targetScale = newPhaseConfig.targetScale
-            state.phaseProgress = 0
-
-            // Update wobble intensity based on phase
-            switch newPhaseConfig.phase {
-            case .inhale, .exhale:
-                state.wobbleIntensity = 1.0
-            case .holdIn, .holdOut:
-                state.wobbleIntensity = 0.3
-            case .idle:
-                state.wobbleIntensity = 0.5
-            }
-
-            // Fire phase change callback
-            state.onPhaseChange?(
-                newPhaseConfig.phase,
-                newPhaseConfig.label,
-                state.currentPhaseIndex,
-                state.currentCycle
-            )
+        if let totalCycles = state.totalCycles, cycle >= totalCycles {
+            state.currentCycle = totalCycles
+            state.phaseProgress = 1.0
+            state.state = .complete
+            state.totalDuration = elapsed
+            state.onExerciseComplete?(state.currentCycle, state.totalDuration)
+            return
         }
+
+        var offset = elapsed - Double(cycle) * cycleDuration
+        var phaseIndex = 0
+        var phaseStart = Double(cycle) * cycleDuration
+        for (index, phase) in state.phases.enumerated() {
+            if offset < phase.duration || index == state.phases.count - 1 {
+                phaseIndex = index
+                break
+            }
+            offset -= phase.duration
+            phaseStart += phase.duration
+        }
+
+        let currentPhaseConfig = state.phases[phaseIndex]
+        state.phaseProgress = min(1.0, offset / currentPhaseConfig.duration)
+
+        guard phaseIndex != state.currentPhaseIndex || cycle != state.currentCycle else { return }
+
+        state.currentPhaseIndex = phaseIndex
+        state.currentCycle = cycle
+        state.phaseStartTime = state.exerciseStartTime.addingTimeInterval(phaseStart)
+        state.currentPhase = currentPhaseConfig.phase
+        state.currentLabel = currentPhaseConfig.label
+        state.startScale = state.currentScale  // Remember where we're starting from
+        state.targetScale = currentPhaseConfig.targetScale
+
+        // Update wobble intensity based on phase
+        switch currentPhaseConfig.phase {
+        case .inhale, .exhale:
+            state.wobbleIntensity = 1.0
+        case .holdIn, .holdOut:
+            state.wobbleIntensity = 0.3
+        case .idle:
+            state.wobbleIntensity = 0.5
+        }
+
+        // Fire phase change callback (once, for the phase we are now in)
+        state.onPhaseChange?(
+            currentPhaseConfig.phase,
+            currentPhaseConfig.label,
+            state.currentPhaseIndex,
+            state.currentCycle
+        )
     }
 
     private func updateWobble(at date: Date, pointCount: Int) {

@@ -156,8 +156,17 @@ public class ExpoBreathingExerciseModule: Module {
         state.phases = phases
         state.currentPhaseIndex = 0
         state.currentCycle = 0
-        state.phaseStartTime = Date()
-        state.exerciseStartTime = Date()
+        // Optional absolute anchor (epoch ms) so the caller can drive other
+        // consumers - voice cues, a Live Activity - from the very same
+        // schedule; without it the exercise starts now.
+        let startTime: Date
+        if let ms = (pattern["startTime"] as? NSNumber)?.doubleValue, ms > 0 {
+            startTime = Date(timeIntervalSince1970: ms / 1000.0)
+        } else {
+            startTime = Date()
+        }
+        state.phaseStartTime = startTime
+        state.exerciseStartTime = startTime
 
         // Set initial phase values
         let firstPhase = phases[0]
