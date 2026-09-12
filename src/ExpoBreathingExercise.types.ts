@@ -12,6 +12,8 @@ export interface BreathPhaseConfig {
 export interface BreathingPattern {
   phases: BreathPhaseConfig[];
   cycles?: number;       // undefined = infinite
+  /** Epoch milliseconds the exercise is anchored to; defaults to now. */
+  startTime?: number;
 }
 
 export type BreathingPreset = 'relaxing' | 'box' | 'energizing' | 'calming';

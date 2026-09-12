@@ -118,9 +118,12 @@ public class ExpoBreathingExerciseModule: Module {
 
         var phases: [BreathPhaseConfig] = []
         for phaseDict in phasesArray {
+            // NSNumber casts: bridged JS numbers can arrive as Int or Double
+            // depending on their value; a direct `as? Double`/`as? Int` on the
+            // wrong underlying type silently fails.
             guard let phaseString = phaseDict["phase"] as? String,
-                  let duration = phaseDict["duration"] as? Double,
-                  let targetScale = phaseDict["targetScale"] as? Double,
+                  let duration = (phaseDict["duration"] as? NSNumber)?.doubleValue,
+                  let targetScale = (phaseDict["targetScale"] as? NSNumber)?.doubleValue,
                   let label = phaseDict["label"] as? String else {
                 continue
             }
@@ -144,19 +147,26 @@ public class ExpoBreathingExerciseModule: Module {
 
         guard !phases.isEmpty else { return }
 
-        // Parse cycles
-        if let cycles = pattern["cycles"] as? Int {
-            state.totalCycles = cycles
-        } else {
-            state.totalCycles = nil
-        }
+        // Parse cycles. NSNumber cast, NOT `as? Int`: the bridge delivers JS
+        // numbers as Double, and `Double as? Int` fails in Swift — which made
+        // totalCycles nil (= infinite) and exercises never complete.
+        state.totalCycles = (pattern["cycles"] as? NSNumber)?.intValue
 
         // Setup state
         state.phases = phases
         state.currentPhaseIndex = 0
         state.currentCycle = 0
-        state.phaseStartTime = Date()
-        state.exerciseStartTime = Date()
+        // Optional absolute anchor (epoch ms) so the caller can drive other
+        // consumers - voice cues, a Live Activity - from the very same
+        // schedule; without it the exercise starts now.
+        let startTime: Date
+        if let ms = (pattern["startTime"] as? NSNumber)?.doubleValue, ms > 0 {
+            startTime = Date(timeIntervalSince1970: ms / 1000.0)
+        } else {
+            startTime = Date()
+        }
+        state.phaseStartTime = startTime
+        state.exerciseStartTime = startTime
 
         // Set initial phase values
         let firstPhase = phases[0]

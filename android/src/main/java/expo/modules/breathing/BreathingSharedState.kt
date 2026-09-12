@@ -88,9 +88,13 @@ object BreathingSharedState {
     @Volatile
     var totalDuration: Double = 0.0
 
-    // Callbacks
+    // Callbacks. Owned by the currently attached view (see callbackOwner) so a
+    // detached or recycled instance can never swallow events.
     var onPhaseChange: ((BreathPhase, String, Int, Int) -> Unit)? = null
     var onExerciseComplete: ((Int, Double) -> Unit)? = null
+
+    @Volatile
+    var callbackOwner: Any? = null
 
     fun reset() {
         state = BreathingExerciseState.STOPPED

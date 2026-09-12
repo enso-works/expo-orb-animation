@@ -33,7 +33,17 @@ class ExpoOrbView(context: Context, appContext: AppContext) : ExpoView(context, 
         clipToPadding = false
         composeView.clipChildren = false
         composeView.clipToPadding = false
-        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+    }
+
+    // React Native measures views before attaching them to a window. ComposeView
+    // creates its composition on measure, which needs a window recomposer and
+    // throws "Cannot locate windowRecomposer" when detached — so only add the
+    // ComposeView child once we are attached.
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (composeView.parent == null) {
+            addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        }
     }
 
     @Composable

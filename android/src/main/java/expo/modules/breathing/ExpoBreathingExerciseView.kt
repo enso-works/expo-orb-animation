@@ -37,10 +37,35 @@ class ExpoBreathingExerciseView(context: Context, appContext: AppContext) : Expo
         clipToPadding = false
         composeView.clipChildren = false
         composeView.clipToPadding = false
-        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        // NOTE: callbacks are deliberately NOT bound here. Fabric constructs
+        // spare instances (preallocation/recycling) that may never attach; if
+        // construction claimed the shared callbacks, events would route to a
+        // dispatcher that never reaches JS. Only attached views own callbacks.
+    }
 
-        // Setup callbacks
+    // React Native measures views before attaching them to a window. ComposeView
+    // creates its composition on measure, which needs a window recomposer and
+    // throws "Cannot locate windowRecomposer" when detached — so only add the
+    // ComposeView child once we are attached.
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (composeView.parent == null) {
+            addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        }
         setupCallbacks()
+        BreathingSharedState.callbackOwner = this
+    }
+
+    override fun onDetachedFromWindow() {
+        // Only release if a newer view hasn't already claimed ownership —
+        // navigation transitions can detach the old screen after the new one
+        // attaches.
+        if (BreathingSharedState.callbackOwner === this) {
+            BreathingSharedState.callbackOwner = null
+            BreathingSharedState.onPhaseChange = null
+            BreathingSharedState.onExerciseComplete = null
+        }
+        super.onDetachedFromWindow()
     }
 
     private fun setupCallbacks() {
