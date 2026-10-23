@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc -p tsconfig.json --noEmit
+      - run: npx eslint . --max-warnings 0
+      - run: npx jest --ci
+      - name: Build
+        run: npx tsc -p tsconfig.json
+      - name: Package contents
+        run: node scripts/check-pack.mjs
