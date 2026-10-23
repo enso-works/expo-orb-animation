@@ -45,5 +45,11 @@
     "expo": "*",
     "react": "*",
     "react-native": "*"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 100,
+    "trailingComma": "es5",
+    "bracketSameLine": true
   }
 }
