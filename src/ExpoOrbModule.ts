@@ -14,9 +14,11 @@ const module = requireNativeModule<ExpoOrbModule>('ExpoOrb');
 export default module;
 
 /**
- * Set the orb activity level directly via native function.
+ * Set the orb activity level directly via native function (clamped to 0..1).
  * This bypasses React's prop system to prevent animation interference.
  */
 export function setOrbActivity(activity: number): void {
+  // Native clamps to 0..1 but passes NaN straight through to the animation.
+  if (typeof activity !== 'number' || Number.isNaN(activity)) return;
   module.setActivity(activity);
 }
