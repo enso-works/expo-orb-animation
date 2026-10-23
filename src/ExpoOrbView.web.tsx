@@ -5,10 +5,11 @@ import { ExpoOrbViewProps } from './ExpoOrb.types';
 const defaultColors = ['#22c55e', '#3b82f6', '#ec4899'];
 
 export default function ExpoOrbView(props: ExpoOrbViewProps) {
-  const colors = Array.isArray(props.backgroundColors) &&
+  const colors =
+    Array.isArray(props.backgroundColors) &&
     props.backgroundColors.every((color) => typeof color === 'string')
-    ? (props.backgroundColors as string[])
-    : defaultColors;
+      ? (props.backgroundColors as string[])
+      : defaultColors;
 
   const gradient = `radial-gradient(circle at 30% 30%, ${colors[0]}, ${colors[1] ?? colors[0]}, ${colors[2] ?? colors[1] ?? colors[0]})`;
 

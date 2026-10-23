@@ -1,336 +1,187 @@
 # expo-orb
 
-An animated orb component for React Native with Expo. Renders a glowing, animated sphere with particles, wavy blobs, and customizable visual effects.
+[![npm](https://img.shields.io/npm/v/expo-orb)](https://www.npmjs.com/package/expo-orb)
+[![CI](https://github.com/enso-works/expo-orb-animation/actions/workflows/ci.yml/badge.svg)](https://github.com/enso-works/expo-orb-animation/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/expo-orb)](LICENSE)
 
-Inspired by and iOS implementation from [metasidd/Orb](https://github.com/metasidd/Orb)
+Two native animated views for Expo apps:
 
-## Demo
+- **`ExpoOrbView`**, a glowing orb with particles and wavy blobs that reacts to an activity level (a voice assistant that is listening or speaking, for example).
+- **`ExpoBreathingExerciseView`**, a guided breathing exercise: a morphing blob, a progress ring and text cues that follow a pattern of inhale, hold and exhale phases.
+
+SwiftUI on iOS, Jetpack Compose on Android. The iOS orb is based on [metasidd/Orb](https://github.com/metasidd/Orb). Used in production by [Braele](https://braele.app).
 
 | iOS | Android |
-|:---:|:-------:|
-| ![iOS Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-ios.gif) | ![Android Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-android.gif) |
+| :-: | :-: |
+| ![Orb on iOS](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-ios.gif) | ![Orb on Android](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-android.gif) |
 
-## Features
+## Install
 
-- Smooth 60fps animations
-- Activity-based animation states (idle, speaking, etc.)
-- Breathing animation effect
-- Customizable colors, particles, and glow effects
-- Native performance on iOS (SwiftUI/SpriteKit) and Android (Jetpack Compose)
-
-## Installation
-
-```bash
-npm install expo-orb
+```sh
+npx expo install expo-orb
 ```
 
-For bare React Native projects, run `npx pod-install` after installation.
+It is a native module, so it needs a development build (`npx expo run:ios` or EAS Build), not Expo Go. In a bare React Native app, run `npx pod-install` afterwards.
 
-## Usage
+| | Supported |
+| --- | --- |
+| Expo SDK | 54 and 56 are tested |
+| iOS | 15.1 and later |
+| Android | API 24 and later |
+| Web | Renders a still gradient circle; the animation and controls do nothing |
+
+## Orb
 
 ```tsx
 import { ExpoOrbView, setOrbActivity } from 'expo-orb';
 
-function MyComponent() {
+export function Assistant() {
   return (
     <ExpoOrbView
-      style={{ width: 200, height: 200 }}
+      style={{ width: 220, height: 220 }}
       backgroundColors={['#7c3aed', '#3b82f6', '#ec4899']}
-      glowColor="#ffffff"
-      particleColor="#ffffff"
-      showBackground={true}
-      showWavyBlobs={true}
-      showParticles={true}
-      showGlowEffects={true}
-      showShadow={true}
     />
   );
 }
 
-// Control animation intensity (0-1)
-setOrbActivity(0.8); // Active/speaking state
-setOrbActivity(0.1); // Idle state
+setOrbActivity(0.85); // speaking
+setOrbActivity(0.1); // idle
 ```
 
-## Props
+`setOrbActivity(level)` sets how lively the orb is, from `0` (calm) to `1` (very active). It goes straight to native instead of through props, so frequent updates (every audio frame, say) do not re-render React or restart the animation. The level is shared by every orb on screen.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `backgroundColors` | `ColorValue[]` | `['green', 'blue', 'pink']` | Gradient colors for the orb background (min 2 colors) |
-| `glowColor` | `ColorValue` | `'white'` | Color of the glow effects |
-| `particleColor` | `ColorValue` | `'white'` | Color of floating particles |
-| `coreGlowIntensity` | `number` | `1.0` | Intensity of the core glow effect (0+) |
-| `breathingIntensity` | `number` | `0` | Intensity of breathing animation (0-1) |
-| `breathingSpeed` | `number` | `0.25` | Speed of breathing animation |
-| `showBackground` | `boolean` | `true` | Show/hide background gradient |
-| `showWavyBlobs` | `boolean` | `true` | Show/hide animated wavy blob overlays |
-| `showParticles` | `boolean` | `true` | Show/hide floating particles |
-| `showGlowEffects` | `boolean` | `true` | Show/hide rotating glow effects |
-| `showShadow` | `boolean` | `true` | Show/hide drop shadow |
-| `speed` | `number` | `60` | Animation speed multiplier |
-| `style` | `StyleProp<ViewStyle>` | - | Container style (set width/height here) |
+### Orb props
 
-## Methods
+| Prop | Type | Default | |
+| --- | --- | --- | --- |
+| `backgroundColors` | `ColorValue[]` | green, blue, pink | Gradient colours, at least two |
+| `glowColor` | `ColorValue` | white | |
+| `particleColor` | `ColorValue` | white | |
+| `coreGlowIntensity` | `number` | `1` | `0` and up |
+| `breathingIntensity` | `number` | `0` | How much the orb swells, `0` to `1` |
+| `breathingSpeed` | `number` | `0.25` | |
+| `speed` | `number` | `60` | Overall animation speed |
+| `showBackground` | `boolean` | `true` | |
+| `showWavyBlobs` | `boolean` | `true` | |
+| `showParticles` | `boolean` | `true` | |
+| `showGlowEffects` | `boolean` | `true` | |
+| `showShadow` | `boolean` | `true` | |
+| `style` | `ViewStyle` | | Give it a width and height |
 
-### `setOrbActivity(activity: number)`
-
-Controls the orb's animation intensity. Pass a value between 0 and 1:
-
-- `0` - Minimal activity (idle)
-- `0.1-0.3` - Low activity
-- `0.5-0.7` - Medium activity
-- `0.8-1.0` - High activity (speaking/active)
-
-This function bypasses React's prop system to prevent animation flickering during rapid updates.
+## Breathing exercise
 
 ```tsx
-import { setOrbActivity } from 'expo-orb';
-
-// Transition to speaking state
-setOrbActivity(0.85);
-
-// Return to idle
-setOrbActivity(0.08);
-```
-
-## Example
-
-See the `/example` directory for a complete working example with activity simulation.
-
-```tsx
-import * as React from 'react';
-import { View } from 'react-native';
-import { ExpoOrbView, setOrbActivity } from 'expo-orb';
-
-export default function App() {
-  React.useEffect(() => {
-    // Simulate activity changes
-    const interval = setInterval(() => {
-      const activity = Math.random() > 0.5 ? 0.85 : 0.08;
-      setOrbActivity(activity);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <ExpoOrbView
-        style={{ width: 220, height: 220 }}
-        backgroundColors={['#7c3aed', '#3b82f6', '#ec4899']}
-      />
-    </View>
-  );
-}
-```
-
----
-
-## Breathing Exercise Component
-
-A guided breathing exercise component with morphing blob animation, progress ring, and text cues. Supports custom breathing patterns and built-in presets.
-
-### Breathing Demo
-
-| iOS | Android |
-|:---:|:-------:|
-| ![iOS Breathing Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/breathing-ios.gif) | ![Android Breathing Demo](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/breathing-android.gif) |
-
-### Basic Usage
-
-```tsx
+import { Button } from 'react-native';
 import {
   ExpoBreathingExerciseView,
+  getBreathingPreset,
   startBreathingExercise,
   stopBreathingExercise,
-  getBreathingPreset,
 } from 'expo-orb';
 
-function BreathingScreen() {
-  const handleStart = () => {
-    // Use a built-in preset
-    startBreathingExercise(getBreathingPreset('box'));
-  };
-
+export function Breathe() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <>
       <ExpoBreathingExerciseView
         style={{ width: 300, height: 300 }}
-        blobColors={['#7c3aed', '#3b82f6', '#ec4899']}
-        showProgressRing={true}
-        showTextCue={true}
-        onPhaseChange={(e) => console.log('Phase:', e.nativeEvent.label)}
-        onExerciseComplete={(e) => console.log('Done! Cycles:', e.nativeEvent.totalCycles)}
+        onPhaseChange={({ nativeEvent }) => console.log(nativeEvent.label)}
+        onExerciseComplete={() => console.log('done')}
       />
-      <Button title="Start" onPress={handleStart} />
+      <Button title="Box breathing" onPress={() => startBreathingExercise(getBreathingPreset('box'))} />
       <Button title="Stop" onPress={stopBreathingExercise} />
-    </View>
+    </>
   );
 }
 ```
 
-### Breathing Props
+The view draws the exercise; the functions run it. There is one exercise at a time, shared by every breathing view that is mounted.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `blobColors` | `ColorValue[]` | `['green', 'blue', 'pink']` | Gradient colors for the morphing blob |
-| `innerBlobColor` | `ColorValue` | `'white'` | Color of the inner blob |
-| `glowColor` | `ColorValue` | `'white'` | Color of the glow effects |
-| `particleColor` | `ColorValue` | `'white'` | Color of floating particles |
-| `progressRingColor` | `ColorValue` | `'white'` | Color of the progress ring |
-| `textColor` | `ColorValue` | `'white'` | Color of the instruction text |
-| `showProgressRing` | `boolean` | `true` | Show/hide the progress ring |
-| `showTextCue` | `boolean` | `true` | Show/hide the instruction text (e.g., "Breathe In") |
-| `showInnerBlob` | `boolean` | `true` | Show/hide the inner blob |
-| `showShadow` | `boolean` | `true` | Show/hide drop shadow |
-| `showParticles` | `boolean` | `true` | Show/hide floating particles |
-| `showWavyBlobs` | `boolean` | `true` | Show/hide wavy blob overlays |
-| `showGlowEffects` | `boolean` | `true` | Show/hide rotating glow effects |
-| `pointCount` | `number` | `8` | Number of points for blob morphing |
-| `wobbleIntensity` | `number` | `0.5` | Intensity of wobble animation (0-1) |
-| `style` | `StyleProp<ViewStyle>` | - | Container style (set width/height here) |
+### Patterns
 
-### Breathing Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `onPhaseChange` | `{ phase, label, phaseIndex, cycle }` | Fired when the breathing phase changes |
-| `onExerciseComplete` | `{ totalCycles, totalDuration }` | Fired when all cycles complete |
-
-### Breathing Control Functions
-
-```tsx
-import {
-  startBreathingExercise,
-  stopBreathingExercise,
-  pauseBreathingExercise,
-  resumeBreathingExercise,
-  getBreathingPreset,
-} from 'expo-orb';
-```
-
-| Function | Description |
-|----------|-------------|
-| `startBreathingExercise(pattern)` | Start the exercise with a custom pattern or preset |
-| `stopBreathingExercise()` | Stop the current exercise |
-| `pauseBreathingExercise()` | Pause the current exercise |
-| `resumeBreathingExercise()` | Resume a paused exercise |
-| `getBreathingPreset(name)` | Get a built-in preset by name |
-
-### Built-in Presets
-
-| Preset | Pattern | Cycles | Description |
-|--------|---------|--------|-------------|
-| `'relaxing'` | 4s in, 7s hold, 8s out | 4 | 4-7-8 technique for relaxation |
-| `'box'` | 4s in, 4s hold, 4s out, 4s hold | 4 | Box breathing for focus |
-| `'energizing'` | 2s in, 2s out | 10 | Quick breathing for energy |
-| `'calming'` | 4s in, 6s out | 6 | Extended exhale for calm |
-
-### Custom Breathing Patterns
-
-Create your own breathing patterns:
-
-```tsx
-import { startBreathingExercise, BreathingPattern } from 'expo-orb';
-
-const customPattern: BreathingPattern = {
+```ts
+startBreathingExercise({
   phases: [
-    { phase: 'inhale', duration: 5000, targetScale: 1.35, label: 'Breathe In' },
-    { phase: 'holdIn', duration: 3000, targetScale: 1.35, label: 'Hold' },
-    { phase: 'exhale', duration: 7000, targetScale: 0.75, label: 'Breathe Out' },
-    { phase: 'holdOut', duration: 2000, targetScale: 0.75, label: 'Rest' },
+    { phase: 'inhale', duration: 4000, targetScale: 1.35, label: 'Breathe in' },
+    { phase: 'holdIn', duration: 7000, targetScale: 1.35, label: 'Hold' },
+    { phase: 'exhale', duration: 8000, targetScale: 0.75, label: 'Breathe out' },
   ],
-  cycles: 5, // undefined for infinite
-};
-
-startBreathingExercise(customPattern);
-```
-
-### Phase Types
-
-| Phase | Description |
-|-------|-------------|
-| `'inhale'` | Breathing in - blob expands |
-| `'holdIn'` | Holding breath after inhale |
-| `'exhale'` | Breathing out - blob contracts |
-| `'holdOut'` | Holding breath after exhale |
-
-### Complete Breathing Example
-
-```tsx
-import * as React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import {
-  ExpoBreathingExerciseView,
-  startBreathingExercise,
-  stopBreathingExercise,
-  pauseBreathingExercise,
-  resumeBreathingExercise,
-  getBreathingPreset,
-  BreathingPreset,
-} from 'expo-orb';
-
-export default function BreathingApp() {
-  const [currentPhase, setCurrentPhase] = React.useState('');
-  const [isPaused, setIsPaused] = React.useState(false);
-
-  const startPreset = (preset: BreathingPreset) => {
-    setIsPaused(false);
-    startBreathingExercise(getBreathingPreset(preset));
-  };
-
-  return (
-    <View style={styles.container}>
-      <ExpoBreathingExerciseView
-        style={styles.breathingView}
-        blobColors={['#667eea', '#764ba2', '#f093fb']}
-        progressRingColor="#ffffff"
-        textColor="#ffffff"
-        showProgressRing={true}
-        showTextCue={true}
-        showParticles={true}
-        onPhaseChange={(e) => setCurrentPhase(e.nativeEvent.label)}
-        onExerciseComplete={() => setCurrentPhase('Complete!')}
-      />
-
-      <View style={styles.presets}>
-        <TouchableOpacity onPress={() => startPreset('box')}>
-          <Text>Box</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => startPreset('relaxing')}>
-          <Text>Relaxing</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => startPreset('calming')}>
-          <Text>Calming</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.controls}>
-        <TouchableOpacity onPress={() => {
-          if (isPaused) {
-            resumeBreathingExercise();
-          } else {
-            pauseBreathingExercise();
-          }
-          setIsPaused(!isPaused);
-        }}>
-          <Text>{isPaused ? 'Resume' : 'Pause'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={stopBreathingExercise}>
-          <Text>Stop</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  breathingView: { width: 280, height: 280 },
-  presets: { flexDirection: 'row', gap: 16, marginTop: 32 },
-  controls: { flexDirection: 'row', gap: 24, marginTop: 16 },
+  cycles: 4, // leave out to loop until stopped
+  startTime: Date.now(), // optional, see below
 });
 ```
+
+| Field | |
+| --- | --- |
+| `phases[].phase` | `'inhale'`, `'holdIn'`, `'exhale'` or `'holdOut'` |
+| `phases[].duration` | Milliseconds, above 0 |
+| `phases[].targetScale` | Blob size at the end of the phase, `1` is the resting size |
+| `phases[].label` | Text shown in the middle; translate it yourself |
+| `cycles` | Whole number above 0, or leave out to loop |
+| `startTime` | Epoch milliseconds the exercise counts from (iOS) |
+
+`startBreathingExercise` throws a `TypeError` naming the problem when a pattern is invalid (no phases, a zero or negative duration, fractional cycles, and so on). Earlier versions ignored such patterns without a word.
+
+**`startTime`** keeps the animation in step with anything else you time from the same moment, such as voice cues, haptics or a Live Activity. On iOS the phase is worked out from this time on every frame, so it is still right after the app comes back from the background. Android ignores it for now and counts from the moment the exercise starts.
+
+### Presets
+
+`getBreathingPreset(name)` returns a copy you can change.
+
+| Name | Pattern | Cycles |
+| --- | --- | --- |
+| `'box'` | 4 in, 4 hold, 4 out, 4 hold | 4 |
+| `'relaxing'` | 4 in, 7 hold, 8 out (4-7-8) | 4 |
+| `'calming'` | 4 in, 6 out | 6 |
+| `'energizing'` | 2 in, 2 out | 10 |
+
+### Controls
+
+| Function | |
+| --- | --- |
+| `startBreathingExercise(pattern)` | Starts, replacing a running exercise |
+| `pauseBreathingExercise()` | |
+| `resumeBreathingExercise()` | |
+| `stopBreathingExercise()` | |
+
+### Events
+
+| Event | `nativeEvent` | |
+| --- | --- | --- |
+| `onPhaseChange` | `{ phase, label, phaseIndex, cycle }` | At the start of every phase |
+| `onExerciseComplete` | `{ totalCycles, totalDuration }` | After the last cycle; never fires for a looping pattern |
+
+### Breathing view props
+
+| Prop | Type | Default | |
+| --- | --- | --- | --- |
+| `blobColors` | `ColorValue[]` | soft blues and purple | Gradient colours, at least two |
+| `innerBlobColor` | `ColorValue` | white, 30% | |
+| `glowColor` | `ColorValue` | white | |
+| `particleColor` | `ColorValue` | white | |
+| `progressRingColor` | `ColorValue` | white, 50% | |
+| `textColor` | `ColorValue` | white | |
+| `pointCount` | `number` | `8` | Points on the morphing blob |
+| `wobbleIntensity` | `number` | `1` | `0` to `1` |
+| `showProgressRing` | `boolean` | `true` | |
+| `showTextCue` | `boolean` | `true` | |
+| `showInnerBlob` | `boolean` | `true` | |
+| `showParticles` | `boolean` | `true` | |
+| `showWavyBlobs` | `boolean` | `true` | |
+| `showGlowEffects` | `boolean` | `true` | |
+| `showShadow` | `boolean` | `true` | |
+| `style` | `ViewStyle` | | Give it a width and height |
+
+## Example app
+
+`example/` shows both views, the presets and the controls:
+
+```sh
+cd example && npm install && npx expo run:ios
+```
+
+## Contributing and releases
+
+`npm test`, `npx eslint .` and `npx tsc -p tsconfig.json --noEmit` run on every pull request. To release, bump `version` in `package.json`, add a line to [CHANGELOG.md](CHANGELOG.md), merge, and push a `v<version>` tag: the Publish workflow checks, builds and publishes to npm with provenance.
 
 ## License
 

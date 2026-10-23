@@ -4,14 +4,14 @@ export type BreathPhase = 'inhale' | 'holdIn' | 'exhale' | 'holdOut';
 
 export interface BreathPhaseConfig {
   phase: BreathPhase;
-  duration: number;      // milliseconds
-  targetScale: number;   // e.g., 1.0 to 1.3
-  label: string;         // "Breathe In"
+  duration: number; // milliseconds
+  targetScale: number; // e.g., 1.0 to 1.3
+  label: string; // "Breathe In"
 }
 
 export interface BreathingPattern {
   phases: BreathPhaseConfig[];
-  cycles?: number;       // undefined = infinite
+  cycles?: number; // undefined = infinite
   /** Epoch milliseconds the exercise is anchored to; defaults to now. */
   startTime?: number;
 }
@@ -44,8 +44,8 @@ export interface ExpoBreathingExerciseViewProps {
   showParticles?: boolean;
   showWavyBlobs?: boolean;
   showGlowEffects?: boolean;
-  pointCount?: number;           // Morphing points (default: 8)
-  wobbleIntensity?: number;      // 0-1
+  pointCount?: number; // Morphing points (default: 8)
+  wobbleIntensity?: number; // 0-1
   onPhaseChange?: (event: { nativeEvent: PhaseChangeEvent }) => void;
   onExerciseComplete?: (event: { nativeEvent: ExerciseCompleteEvent }) => void;
   style?: StyleProp<ViewStyle>;

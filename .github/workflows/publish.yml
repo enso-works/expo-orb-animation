@@ -1,0 +1,43 @@
+name: Publish
+
+# Push a tag like v0.2.5 on a commit whose package.json says 0.2.5. npm
+# authenticates this workflow through trusted publishing (OIDC), so there is
+# no npm token anywhere and no laptop login involved.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # GitHub release
+  id-token: write # npm trusted publishing and provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Tag matches package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json $version" >&2
+            exit 1
+          fi
+      - run: npm ci
+      - run: npx tsc -p tsconfig.json --noEmit
+      - run: npx eslint . --max-warnings 0
+      - run: npx jest --ci
+      - run: npx tsc -p tsconfig.json
+      - run: node scripts/check-pack.mjs
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@latest
+      - run: npm publish --provenance --access public
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
