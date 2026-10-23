@@ -4,6 +4,15 @@
   "description": "Animated orb and breathing exercise components for React Native (iOS, Android)",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "files": [
+    "build",
+    "src",
+    "!src/__tests__",
+    "ios",
+    "android/build.gradle",
+    "android/src/main",
+    "expo-module.config.json"
+  ],
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
@@ -27,7 +36,10 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/enso-works/expo-orb-animation",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enso-works/expo-orb-animation.git"
+  },
   "bugs": {
     "url": "https://github.com/enso-works/expo-orb-animation/issues"
   },
