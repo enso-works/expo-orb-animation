@@ -13,7 +13,7 @@ SwiftUI on iOS, Jetpack Compose on Android. The iOS orb is based on [metasidd/Or
 
 | iOS | Android |
 | :-: | :-: |
-| ![Orb on iOS](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-ios.gif) | ![Orb on Android](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/demo-android.gif) |
+| ![Orb on iOS](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/orb-ios.gif) | ![Orb on Android](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/orb-android.gif) |
 
 ## Install
 
@@ -69,6 +69,12 @@ setOrbActivity(0.1); // idle
 | `style` | `ViewStyle` | | Give it a width and height |
 
 ## Breathing exercise
+
+The phases are not limited to breathing. Here the same view runs an interval timer (Sprint, Jog, Rest) with warm `blobColors`:
+
+| iOS | Android |
+| :-: | :-: |
+| ![Interval timer on iOS](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/intervals-ios.gif) | ![Interval timer on Android](https://raw.githubusercontent.com/enso-works/expo-orb-animation/main/docs/intervals-android.gif) |
 
 ```tsx
 import { Button } from 'react-native';
@@ -178,6 +184,8 @@ startBreathingExercise({
 ```sh
 cd example && npm install && npx expo run:ios
 ```
+
+The GIFs above come from `example/Showcase.tsx`. Start Metro with `EXPO_PUBLIC_SHOWCASE=orb` or `EXPO_PUBLIC_SHOWCASE=intervals`, open the app, and run `scripts/record-demo.sh <ios|android> <orb|intervals>` from `example/` (needs `ffmpeg` and `gifski`).
 
 ## Contributing and releases
 
