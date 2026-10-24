@@ -7,7 +7,7 @@
 Two native animated views for Expo apps:
 
 - **`ExpoOrbView`**, a glowing orb with particles and wavy blobs that reacts to an activity level (a voice assistant that is listening or speaking, for example).
-- **`ExpoBreathingExerciseView`**, a guided breathing exercise: a morphing blob, a progress ring and text cues that follow a pattern of inhale, hold and exhale phases.
+- **`ExpoBreathingExerciseView`**, a morphing blob with a progress ring and a text cue that steps through timed phases: an interval timer, a countdown, any guided routine.
 
 SwiftUI on iOS, Jetpack Compose on Android. The iOS orb is based on [metasidd/Orb](https://github.com/metasidd/Orb). Used in production by [Braele](https://braele.app).
 
@@ -68,9 +68,9 @@ setOrbActivity(0.1); // idle
 | `showShadow` | `boolean` | `true` | |
 | `style` | `ViewStyle` | | Give it a width and height |
 
-## Breathing exercise
+## Phase view
 
-The phases are not limited to breathing. Here the same view runs an interval timer (Sprint, Jog, Rest) with warm `blobColors`:
+`ExpoBreathingExerciseView` grows and shrinks a blob through a sequence of timed phases, with a progress ring and a label for each one. The API keeps its original names (`startBreathingExercise` and so on); a phase can be anything you time.
 
 | iOS | Android |
 | :-: | :-: |
@@ -80,71 +80,74 @@ The phases are not limited to breathing. Here the same view runs an interval tim
 import { Button } from 'react-native';
 import {
   ExpoBreathingExerciseView,
-  getBreathingPreset,
   startBreathingExercise,
   stopBreathingExercise,
+  type BreathingPattern,
 } from 'expo-orb';
 
-export function Breathe() {
+const intervals: BreathingPattern = {
+  phases: [
+    { phase: 'inhale', duration: 20000, targetScale: 1.3, label: 'Sprint' },
+    { phase: 'exhale', duration: 10000, targetScale: 0.8, label: 'Rest' },
+  ],
+  cycles: 8,
+};
+
+export function IntervalTimer() {
   return (
     <>
       <ExpoBreathingExerciseView
         style={{ width: 300, height: 300 }}
+        blobColors={['#f97316', '#ef4444', '#db2777']}
         onPhaseChange={({ nativeEvent }) => console.log(nativeEvent.label)}
         onExerciseComplete={() => console.log('done')}
       />
-      <Button title="Box breathing" onPress={() => startBreathingExercise(getBreathingPreset('box'))} />
+      <Button title="Start" onPress={() => startBreathingExercise(intervals)} />
       <Button title="Stop" onPress={stopBreathingExercise} />
     </>
   );
 }
 ```
 
-The view draws the exercise; the functions run it. There is one exercise at a time, shared by every breathing view that is mounted.
+The view draws the sequence; the functions run it. There is one sequence at a time, shared by every view that is mounted.
 
 ### Patterns
+
+A countdown that ends with a burst:
 
 ```ts
 startBreathingExercise({
   phases: [
-    { phase: 'inhale', duration: 4000, targetScale: 1.35, label: 'Breathe in' },
-    { phase: 'holdIn', duration: 7000, targetScale: 1.35, label: 'Hold' },
-    { phase: 'exhale', duration: 8000, targetScale: 0.75, label: 'Breathe out' },
+    { phase: 'holdOut', duration: 1000, targetScale: 0.8, label: '3' },
+    { phase: 'holdOut', duration: 1000, targetScale: 0.9, label: '2' },
+    { phase: 'holdOut', duration: 1000, targetScale: 1.0, label: '1' },
+    { phase: 'inhale', duration: 800, targetScale: 1.3, label: 'Go' },
   ],
-  cycles: 4, // leave out to loop until stopped
+  cycles: 1, // leave out to loop until stopped
   startTime: Date.now(), // optional, see below
 });
 ```
 
 | Field | |
 | --- | --- |
-| `phases[].phase` | `'inhale'`, `'holdIn'`, `'exhale'` or `'holdOut'` |
+| `phases[].phase` | How the phase moves: `'inhale'` grows or shrinks to `targetScale` while the ring fills, `'exhale'` does the same while the ring empties, `'holdIn'` and `'holdOut'` jump to `targetScale` and stay there with the ring full or empty |
 | `phases[].duration` | Milliseconds, above 0 |
 | `phases[].targetScale` | Blob size at the end of the phase, `1` is the resting size |
 | `phases[].label` | Text shown in the middle; translate it yourself |
 | `cycles` | Whole number above 0, or leave out to loop |
-| `startTime` | Epoch milliseconds the exercise counts from (iOS) |
+| `startTime` | Epoch milliseconds the sequence counts from (iOS) |
 
 `startBreathingExercise` throws a `TypeError` naming the problem when a pattern is invalid (no phases, a zero or negative duration, fractional cycles, and so on). Earlier versions ignored such patterns without a word.
 
-**`startTime`** keeps the animation in step with anything else you time from the same moment, such as voice cues, haptics or a Live Activity. On iOS the phase is worked out from this time on every frame, so it is still right after the app comes back from the background. Android ignores it for now and counts from the moment the exercise starts.
+**`startTime`** keeps the animation in step with anything else you time from the same moment, such as audio cues, haptics or a Live Activity. On iOS the phase is worked out from this time on every frame, so it is still right after the app comes back from the background. Android ignores it for now and counts from the moment the sequence starts.
 
-### Presets
-
-`getBreathingPreset(name)` returns a copy you can change.
-
-| Name | Pattern | Cycles |
-| --- | --- | --- |
-| `'box'` | 4 in, 4 hold, 4 out, 4 hold | 4 |
-| `'relaxing'` | 4 in, 7 hold, 8 out (4-7-8) | 4 |
-| `'calming'` | 4 in, 6 out | 6 |
-| `'energizing'` | 2 in, 2 out | 10 |
+`getBreathingPreset(name)` returns a copy of one of the built-in patterns (`'box'`, `'relaxing'`, `'calming'`, `'energizing'`).
 
 ### Controls
 
 | Function | |
 | --- | --- |
-| `startBreathingExercise(pattern)` | Starts, replacing a running exercise |
+| `startBreathingExercise(pattern)` | Starts, replacing a running sequence |
 | `pauseBreathingExercise()` | |
 | `resumeBreathingExercise()` | |
 | `stopBreathingExercise()` | |
@@ -156,7 +159,7 @@ startBreathingExercise({
 | `onPhaseChange` | `{ phase, label, phaseIndex, cycle }` | At the start of every phase |
 | `onExerciseComplete` | `{ totalCycles, totalDuration }` | After the last cycle; never fires for a looping pattern |
 
-### Breathing view props
+### Phase view props
 
 | Prop | Type | Default | |
 | --- | --- | --- | --- |
@@ -179,7 +182,7 @@ startBreathingExercise({
 
 ## Example app
 
-`example/` shows both views, the presets and the controls:
+`example/` shows both views, a few timer patterns and the controls:
 
 ```sh
 cd example && npm install && npx expo run:ios
