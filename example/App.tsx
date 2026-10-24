@@ -10,6 +10,9 @@ import {
   getBreathingPreset,
 } from 'expo-orb';
 import EdgeCaseTests from './EdgeCaseTests';
+import Showcase, { type ShowcaseScene } from './Showcase';
+
+const SHOWCASE_SCENE = process.env.EXPO_PUBLIC_SHOWCASE as ShowcaseScene | undefined;
 
 // Memoized orb component - prevents re-renders from parent state changes
 const MemoizedOrb = React.memo(() => (
@@ -150,6 +153,10 @@ function BreathingScreen() {
 
 export default function App() {
   const [screen, setScreen] = React.useState<Screen>('orb');
+
+  if (SHOWCASE_SCENE === 'orb' || SHOWCASE_SCENE === 'intervals') {
+    return <Showcase scene={SHOWCASE_SCENE} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
