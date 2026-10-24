@@ -7,7 +7,7 @@ import {
   ExpoBreathingExerciseView,
   startBreathingExercise,
   stopBreathingExercise,
-  getBreathingPreset,
+  type BreathingPattern,
 } from 'expo-orb';
 import EdgeCaseTests from './EdgeCaseTests';
 import Showcase, { type ShowcaseScene } from './Showcase';
@@ -29,8 +29,36 @@ const MemoizedOrb = React.memo(() => (
   />
 ));
 
-type Screen = 'orb' | 'breathing' | 'tests';
-type BreathingPreset = 'box' | 'relaxing' | 'energizing' | 'calming';
+type Screen = 'orb' | 'timer' | 'tests';
+type TimerPattern = 'intervals' | 'countdown' | 'focus';
+
+// Short timings so each pattern is quick to try out.
+const TIMER_PATTERNS: Record<TimerPattern, BreathingPattern> = {
+  intervals: {
+    phases: [
+      { phase: 'inhale', duration: 4000, targetScale: 1.3, label: 'Sprint' },
+      { phase: 'exhale', duration: 3000, targetScale: 0.8, label: 'Rest' },
+    ],
+    cycles: 4,
+  },
+  countdown: {
+    phases: [
+      { phase: 'holdOut', duration: 1000, targetScale: 0.8, label: '3' },
+      { phase: 'holdOut', duration: 1000, targetScale: 0.9, label: '2' },
+      { phase: 'holdOut', duration: 1000, targetScale: 1.0, label: '1' },
+      { phase: 'inhale', duration: 800, targetScale: 1.3, label: 'Go' },
+    ],
+    cycles: 1,
+  },
+  focus: {
+    phases: [
+      { phase: 'inhale', duration: 6000, targetScale: 1.2, label: 'Focus' },
+      { phase: 'holdIn', duration: 2000, targetScale: 1.2, label: 'Wrap up' },
+      { phase: 'exhale', duration: 3000, targetScale: 0.85, label: 'Break' },
+    ],
+    cycles: 3,
+  },
+};
 
 function OrbScreen() {
   const [isSpeaking, setIsSpeaking] = React.useState(false);
@@ -78,14 +106,13 @@ function OrbScreen() {
   );
 }
 
-function BreathingScreen() {
+function TimerScreen() {
   const [isRunning, setIsRunning] = React.useState(false);
   const [currentPhase, setCurrentPhase] = React.useState('');
-  const [selectedPreset, setSelectedPreset] = React.useState<BreathingPreset>('box');
+  const [selectedPattern, setSelectedPattern] = React.useState<TimerPattern>('intervals');
 
   const handleStart = () => {
-    const pattern = getBreathingPreset(selectedPreset);
-    startBreathingExercise(pattern);
+    startBreathingExercise(TIMER_PATTERNS[selectedPattern]);
     setIsRunning(true);
   };
 
@@ -97,11 +124,11 @@ function BreathingScreen() {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>Breathing Exercise</Text>
+      <Text style={styles.title}>Timer</Text>
 
       <ExpoBreathingExerciseView
-        style={styles.breathingView}
-        blobColors={['#06b6d4', '#3b82f6', '#8b5cf6']}
+        style={styles.phaseView}
+        blobColors={['#f97316', '#ef4444', '#db2777']}
         showProgressRing={true}
         showTextCue={true}
         showInnerBlob={true}
@@ -114,22 +141,22 @@ function BreathingScreen() {
       />
 
       <View style={styles.presetRow}>
-        {(['box', 'relaxing', 'energizing', 'calming'] as BreathingPreset[]).map((preset) => (
+        {(Object.keys(TIMER_PATTERNS) as TimerPattern[]).map((pattern) => (
           <TouchableOpacity
-            key={preset}
+            key={pattern}
             style={[
               styles.presetButton,
-              selectedPreset === preset && styles.presetButtonActive,
+              selectedPattern === pattern && styles.presetButtonActive,
             ]}
-            onPress={() => setSelectedPreset(preset)}
+            onPress={() => setSelectedPattern(pattern)}
           >
             <Text
               style={[
                 styles.presetText,
-                selectedPreset === preset && styles.presetTextActive,
+                selectedPattern === pattern && styles.presetTextActive,
               ]}
             >
-              {preset}
+              {pattern}
             </Text>
           </TouchableOpacity>
         ))}
@@ -171,12 +198,12 @@ export default function App() {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, screen === 'breathing' && styles.tabActive]}
-          onPress={() => setScreen('breathing')}
-          testID="tab-breathing"
+          style={[styles.tab, screen === 'timer' && styles.tabActive]}
+          onPress={() => setScreen('timer')}
+          testID="tab-timer"
         >
-          <Text style={[styles.tabText, screen === 'breathing' && styles.tabTextActive]}>
-            Breathing
+          <Text style={[styles.tabText, screen === 'timer' && styles.tabTextActive]}>
+            Timer
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -191,7 +218,7 @@ export default function App() {
       </View>
 
       {screen === 'orb' && <OrbScreen />}
-      {screen === 'breathing' && <BreathingScreen />}
+      {screen === 'timer' && <TimerScreen />}
       {screen === 'tests' && <EdgeCaseTests />}
     </SafeAreaView>
   );
@@ -242,7 +269,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
   },
-  breathingView: {
+  phaseView: {
     width: 280,
     height: 280,
   },
